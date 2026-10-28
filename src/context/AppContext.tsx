@@ -63,6 +63,9 @@ interface AppContextType {
   resetToDefaultData: () => void;
   printDoc: PrintDocument | null;
   setPrintDoc: (doc: PrintDocument | null) => void;
+  sidebarCollapsed: boolean;
+  setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleSidebar: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -73,6 +76,7 @@ const STORAGE_KEYS = {
   INFAQ: 'dzikr_fleet_infaq_v1',
   SETTINGS: 'dzikr_fleet_settings_v1',
   AUTH: 'dzikr_fleet_is_coord_v1',
+  SIDEBAR: 'dzikr_fleet_sidebar_collapsed_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -123,6 +127,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [coordinatorPinModalOpen, setCoordinatorPinModalOpen] = useState(false);
   const [printDoc, setPrintDoc] = useState<PrintDocument | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.SIDEBAR) === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Sync to local storage
   useEffect(() => {
@@ -144,6 +155,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.AUTH, String(isCoordinator));
   }, [isCoordinator]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.SIDEBAR, String(sidebarCollapsed));
+  }, [sidebarCollapsed]);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => !prev);
+  };
 
   const verifyCoordinatorPin = (enteredPin: string): boolean => {
     if (enteredPin === settings.coordinatorPin || enteredPin === '1234') {
@@ -413,6 +432,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resetToDefaultData,
         printDoc,
         setPrintDoc,
+        sidebarCollapsed,
+        setSidebarCollapsed,
+        toggleSidebar,
       }}
     >
       {children}

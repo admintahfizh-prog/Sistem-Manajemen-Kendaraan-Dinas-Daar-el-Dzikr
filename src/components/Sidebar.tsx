@@ -20,6 +20,7 @@ import {
   LogOut,
   ChevronRight,
   School,
+  PanelLeftClose,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -36,6 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
     setCoordinatorPinModalOpen,
     logoutCoordinator,
     settings,
+    sidebarCollapsed,
+    setSidebarCollapsed,
   } = useApp();
 
   const pendingAccCount = bookings.filter((b) => b.status === 'Menunggu ACC').length;
@@ -130,6 +133,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
     setMobileOpen(false);
   };
 
+  const handleHideSidebar = () => {
+    setMobileOpen(false);
+    setSidebarCollapsed(true);
+  };
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -142,14 +150,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
 
       {/* Sidebar container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 text-slate-100 flex flex-col border-r border-slate-800 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 text-slate-100 flex flex-col border-r border-slate-800 transition-all duration-300 ease-in-out lg:static ${
+          sidebarCollapsed
+            ? 'lg:-ml-72 lg:pointer-events-none'
+            : 'lg:ml-0'
+        } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand Lockup */}
-        <div className="p-5 border-b border-slate-800/80 bg-slate-950/40">
-          <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12 rounded-xl bg-emerald-950 border border-emerald-800/80 overflow-hidden shrink-0 flex items-center justify-center p-0.5 shadow-inner">
+        <div className="p-4 border-b border-slate-800/80 bg-slate-950/40 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="relative w-11 h-11 rounded-xl bg-emerald-950 border border-emerald-800/80 overflow-hidden shrink-0 flex items-center justify-center p-0.5 shadow-inner">
               {settings.logoUrl ? (
                 <img
                   src={settings.logoUrl}
@@ -165,18 +175,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-sm font-bold text-white tracking-tight leading-snug truncate">
+              <h1 className="text-xs font-bold text-white tracking-tight leading-snug truncate">
                 {settings.schoolName}
               </h1>
-              <p className="text-[11px] text-emerald-400 font-medium truncate">
+              <p className="text-[10px] text-emerald-400 font-medium truncate">
                 SIM Kendaraan Dinas
               </p>
             </div>
           </div>
+
+          {/* Quick Hide Button in Brand Header */}
+          <button
+            type="button"
+            onClick={handleHideSidebar}
+            title="Sembunyikan Menu Sidebar"
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors shrink-0"
+            aria-label="Sembunyikan Sidebar"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Navigation list */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
           {navItems.map((item, idx) => {
             const isActive = activeTab === item.id;
             const isLocked = item.coordinatorOnly && !isCoordinator;
@@ -186,14 +207,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
             return (
               <React.Fragment key={item.id}>
                 {showCategoryHeading && item.category && (
-                  <div className="pt-3 pb-1 px-3 text-[10px] font-semibold tracking-wider uppercase text-slate-400">
+                  <div className="pt-2.5 pb-1 px-3 text-[10px] font-semibold tracking-wider uppercase text-slate-400">
                     {item.category}
                   </div>
                 )}
                 <button
                   type="button"
                   onClick={() => handleNavClick(item.id, item.coordinatorOnly)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all group ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group ${
                     isActive
                       ? 'bg-emerald-600 text-white shadow-xs font-semibold'
                       : 'text-slate-300 hover:text-white hover:bg-slate-800/70'
@@ -233,6 +254,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
               </React.Fragment>
             );
           })}
+
+          {/* Dedicated Hide Sidebar Menu Option */}
+          <div className="pt-3 pb-1 px-3 text-[10px] font-semibold tracking-wider uppercase text-slate-400">
+            Tampilan Layar
+          </div>
+          <button
+            type="button"
+            onClick={handleHideSidebar}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-emerald-400 hover:bg-slate-800/60 transition-all group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <PanelLeftClose className="w-4 h-4 shrink-0 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+              <span className="truncate whitespace-nowrap">Sembunyikan Sidebar</span>
+            </div>
+            <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
+              Hide
+            </span>
+          </button>
         </nav>
 
         {/* Footer Role Card */}
