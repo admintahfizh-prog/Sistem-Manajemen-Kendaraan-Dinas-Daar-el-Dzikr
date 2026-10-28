@@ -1,0 +1,8 @@
+{
+  "name": "Sistem Manajemen Kendaraan Dinas Daar el Dzikr",
+  "description": "Aplikasi pengelolaan peminjaman, armada, booking, ACC koordinator, berita acara serah terima pengambilan dan pengembalian, SOP klausul, serta infaq perorangan Sekolah Islam Daar el Dzikr.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
