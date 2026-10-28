@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Vehicle, Booking, InfaqRecord, SchoolSettings } from '../types';
+import { Vehicle, Booking, InfaqRecord, SchoolSettings, AppNotification } from '../types';
 
 export const INITIAL_SETTINGS: SchoolSettings = {
   schoolName: 'Sekolah Islam Terpadu Daar el Dzikr',
@@ -282,6 +282,39 @@ export const INITIAL_INFAQ_RECORDS: InfaqRecord[] = [
     paymentMethod: 'Transfer Bank Syariah Indonesia (BSI)',
     notes: 'Tanda terima sah kas tabungan pemeliharaan armada Daar el Dzikr.',
     receivedBy: 'Ust. Ahmad Fauzan (Koord. Sarpras)',
+  },
+];
+
+export const INITIAL_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: 'notif-01',
+    type: 'booking_new',
+    title: 'Permohonan Booking Baru (DZK-202610-003)',
+    message: 'Ust. Muhammad Ihsan, Lc mengajukan peminjaman HiAce untuk hajat keluarga.',
+    timestamp: '27 Okt 2026, 16:30',
+    read: false,
+    bookingCode: 'DZK-202610-003',
+    actionTab: 'acc-coordinator',
+  },
+  {
+    id: 'notif-02',
+    type: 'ready_pickup',
+    title: 'Armada Siap Pengambilan (DZK-202610-002)',
+    message: 'Peminjaman Usth. Siti Khadijah (Tim MHQ Santri) siap untuk serah terima BAST IN.',
+    timestamp: '26 Okt 2026, 14:25',
+    read: false,
+    bookingCode: 'DZK-202610-002',
+    actionTab: 'pengambilan',
+  },
+  {
+    id: 'notif-03',
+    type: 'returned',
+    title: 'Pengembalian Selesai (DZK-202610-004)',
+    message: 'Daihatsu Gran Max telah dikembalikan oleh Pak Hendra Pratama dalam kondisi bersih.',
+    timestamp: '24 Okt 2026, 14:50',
+    read: true,
+    bookingCode: 'DZK-202610-004',
+    actionTab: 'pengembalian',
   },
 ];
 

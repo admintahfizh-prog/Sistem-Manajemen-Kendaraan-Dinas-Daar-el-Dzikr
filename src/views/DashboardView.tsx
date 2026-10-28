@@ -18,6 +18,9 @@ import {
   Gauge,
   Fuel,
   Users,
+  Volume2,
+  Bot,
+  Sparkles,
 } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
@@ -29,6 +32,11 @@ export const DashboardView: React.FC = () => {
     setCoordinatorPinModalOpen,
     isCoordinator,
     setPrintDoc,
+    testAiNotificationVoice,
+    voiceEnabled,
+    setVoiceEnabled,
+    soundEnabled,
+    setSoundEnabled,
   } = useApp();
 
   const totalArmada = vehicles.length;
@@ -84,6 +92,38 @@ export const DashboardView: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* AI Voice Notification Control Banner */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+            <Bot className="w-5 h-5 text-emerald-700" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-900">Sistem Peringatan &amp; Suara AI Notifikasi</span>
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">
+                AI Voice Aktif
+              </span>
+            </div>
+            <p className="text-slate-500 text-[11px] mt-0.5">
+              Memberikan pengumuman suara otomatis ke koordinator untuk Permohonan Booking Baru, Kesiapan Pengambilan, &amp; Pengembalian Armada.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={testAiNotificationVoice}
+            className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold transition-colors flex items-center gap-1.5 shadow-xs text-xs"
+            title="Klik untuk mendengarkan lonceng dan ucapan suara AI secara langsung"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Uji Suara AI Notifikasi
+          </button>
+        </div>
+      </div>
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

@@ -11,13 +11,17 @@ import {
   SchoolSettings,
   HandoverIn,
   HandoverReturn,
+  AppNotification,
+  NotificationType,
 } from '../types';
 import {
   INITIAL_SETTINGS,
   INITIAL_VEHICLES,
   INITIAL_BOOKINGS,
   INITIAL_INFAQ_RECORDS,
+  INITIAL_NOTIFICATIONS,
 } from '../data/mockData';
+import { triggerAiNotification } from '../utils/notificationSound';
 
 export type NavTab =
   | 'dashboard'
@@ -66,6 +70,18 @@ interface AppContextType {
   sidebarCollapsed: boolean;
   setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   toggleSidebar: () => void;
+  notifications: AppNotification[];
+  unreadNotificationCount: number;
+  soundEnabled: boolean;
+  setSoundEnabled: (val: boolean) => void;
+  voiceEnabled: boolean;
+  setVoiceEnabled: (val: boolean) => void;
+  markNotificationAsRead: (id: string) => void;
+  markAllNotificationsAsRead: () => void;
+  clearNotifications: () => void;
+  testAiNotificationVoice: () => void;
+  toastNotification: AppNotification | null;
+  dismissToast: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -77,6 +93,9 @@ const STORAGE_KEYS = {
   SETTINGS: 'dzikr_fleet_settings_v1',
   AUTH: 'dzikr_fleet_is_coord_v1',
   SIDEBAR: 'dzikr_fleet_sidebar_collapsed_v1',
+  NOTIFS: 'dzikr_fleet_notifs_v1',
+  SOUND: 'dzikr_fleet_sound_v1',
+  VOICE: 'dzikr_fleet_voice_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -135,6 +154,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.NOTIFS);
+      return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+    } catch {
+      return INITIAL_NOTIFICATIONS;
+    }
+  });
+
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.SOUND) !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const [voiceEnabled, setVoiceEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.VOICE) !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const [toastNotification, setToastNotification] = useState<AppNotification | null>(null);
+
   // Sync to local storage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.VEHICLES, JSON.stringify(vehicles));
@@ -160,8 +206,49 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.SIDEBAR, String(sidebarCollapsed));
   }, [sidebarCollapsed]);
 
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.NOTIFS, JSON.stringify(notifications));
+  }, [notifications]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.SOUND, String(soundEnabled));
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.VOICE, String(voiceEnabled));
+  }, [voiceEnabled]);
+
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
+  };
+
+  const unreadNotificationCount = notifications.filter((n) => !n.read).length;
+
+  const markNotificationAsRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  };
+
+  const markAllNotificationsAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const clearNotifications = () => {
+    setNotifications([]);
+  };
+
+  const dismissToast = () => {
+    setToastNotification(null);
+  };
+
+  const testAiNotificationVoice = () => {
+    triggerAiNotification({
+      type: 'booking_new',
+      voiceText: 'Pemberitahuan Sistem Sarpras: Uji coba suara kecerdasan buatan untuk notifikasi kendaraan dinas Daar el Dzikr berhasil.',
+      playAudio: true,
+      playVoice: true,
+    });
   };
 
   const verifyCoordinatorPin = (enteredPin: string): boolean => {
@@ -190,23 +277,71 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setBookings((prev) => [newBooking, ...prev]);
+
+    // Push notification for Coordinator
+    const notif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      type: 'booking_new',
+      title: `Permohonan Booking Baru (${code})`,
+      message: `${bookingData.borrowerName} (${bookingData.division}) mengajukan peminjaman armada yang perlu di-ACC.`,
+      timestamp: 'Baru saja',
+      read: false,
+      bookingCode: code,
+      actionTab: 'acc-coordinator',
+    };
+    setNotifications((prev) => [notif, ...prev]);
+    setToastNotification(notif);
+
+    // Audio chime + AI voice announcement
+    triggerAiNotification({
+      type: 'booking_new',
+      voiceText: `Pemberitahuan Koordinator: Terdapat permohonan booking kendaraan baru dari ${bookingData.borrowerName} yang memerlukan persetujuan ACC.`,
+      playAudio: soundEnabled,
+      playVoice: voiceEnabled,
+    });
+
     return newBooking;
   };
 
   const approveBooking = (bookingId: string, notes: string, assignedDriver?: string) => {
+    let targetBooking: Booking | undefined;
     setBookings((prev) =>
       prev.map((b) => {
         if (b.id === bookingId) {
-          return {
+          targetBooking = {
             ...b,
             status: 'Disetujui',
             coordinatorNotes: notes || b.coordinatorNotes,
             driverName: assignedDriver || b.driverName,
           };
+          return targetBooking;
         }
         return b;
       })
     );
+
+    const b = targetBooking || bookings.find((item) => item.id === bookingId);
+    if (b) {
+      const notif: AppNotification = {
+        id: `notif-${Date.now()}`,
+        type: 'ready_pickup',
+        title: `Armada Siap Pengambilan (${b.bookingCode})`,
+        message: `Booking ${b.borrowerName} telah di-ACC. Kendaraan siap untuk Berita Acara Serah Terima Pengambilan.`,
+        timestamp: 'Baru saja',
+        read: false,
+        bookingCode: b.bookingCode,
+        actionTab: 'pengambilan',
+      };
+      setNotifications((prev) => [notif, ...prev]);
+      setToastNotification(notif);
+
+      triggerAiNotification({
+        type: 'ready_pickup',
+        voiceText: `Pemberitahuan: Permohonan booking ${b.bookingCode} telah disetujui. Kendaraan siap untuk serah terima pengambilan.`,
+        playAudio: soundEnabled,
+        playVoice: voiceEnabled,
+      });
+    }
   };
 
   const rejectBooking = (bookingId: string, reason: string) => {
@@ -273,6 +408,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           return v;
         })
       );
+
+      const notif: AppNotification = {
+        id: `notif-${Date.now()}`,
+        type: 'ready_pickup',
+        title: `Kunci Diserahkan (${targetBooking.bookingCode})`,
+        message: `BAST Pengambilan selesai. Kendaraan sedang digunakan oleh ${targetBooking.borrowerName}.`,
+        timestamp: 'Baru saja',
+        read: false,
+        bookingCode: targetBooking.bookingCode,
+        actionTab: 'pengambilan',
+      };
+      setNotifications((prev) => [notif, ...prev]);
+      setToastNotification(notif);
+
+      triggerAiNotification({
+        type: 'ready_pickup',
+        voiceText: `Info Sarpras: Kunci kendaraan ${targetBooking.bookingCode} telah diserahkan. Perjalanan telah dimulai.`,
+        playAudio: soundEnabled,
+        playVoice: voiceEnabled,
+      });
     }
   };
 
@@ -314,6 +469,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           return v;
         })
       );
+
+      // Notification for return
+      const notif: AppNotification = {
+        id: `notif-${Date.now()}`,
+        type: 'returned',
+        title: `Kendaraan Telah Kembali (${targetBooking.bookingCode})`,
+        message: `Armada dinas telah diserahkan kembali oleh ${targetBooking.borrowerName}. BAST Return selesai.`,
+        timestamp: 'Baru saja',
+        read: false,
+        bookingCode: targetBooking.bookingCode,
+        actionTab: 'pengembalian',
+      };
+      setNotifications((prev) => [notif, ...prev]);
+      setToastNotification(notif);
+
+      triggerAiNotification({
+        type: 'returned',
+        voiceText: `Pemberitahuan: Kendaraan dinas telah kembali ke sekolah. Berita acara serah terima pengembalian telah selesai.`,
+        playAudio: soundEnabled,
+        playVoice: voiceEnabled,
+      });
 
       // If personal use and payment recorded, or cleaning penalty, record infaq
       if (
@@ -435,6 +611,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         sidebarCollapsed,
         setSidebarCollapsed,
         toggleSidebar,
+        notifications,
+        unreadNotificationCount,
+        soundEnabled,
+        setSoundEnabled,
+        voiceEnabled,
+        setVoiceEnabled,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
+        clearNotifications,
+        testAiNotificationVoice,
+        toastNotification,
+        dismissToast,
       }}
     >
       {children}

@@ -13,6 +13,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
 } from 'lucide-react';
+import { NotificationPopover } from './NotificationPopover';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -143,8 +144,10 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         )}
       </div>
 
-      {/* Zone 3: Primary Action CTA */}
+      {/* Zone 3: Notification Bell & Primary Action CTA */}
       <div className="flex items-center gap-2 shrink-0">
+        <NotificationPopover />
+
         <button
           type="button"
           onClick={() => setActiveTab('booking')}

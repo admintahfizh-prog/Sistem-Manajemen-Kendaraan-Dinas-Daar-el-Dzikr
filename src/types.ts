@@ -135,3 +135,21 @@ export interface SchoolSettings {
   defaultInfaqPerKm: number;
   washingPenaltyAmount: number;
 }
+
+export type NotificationType =
+  | 'booking_new'
+  | 'ready_pickup'
+  | 'returned'
+  | 'booking_approved'
+  | 'booking_rejected';
+
+export interface AppNotification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  bookingCode?: string;
+  actionTab?: 'acc-coordinator' | 'pengambilan' | 'pengembalian' | 'booking' | 'infaq';
+}

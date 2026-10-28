@@ -9,6 +9,7 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { CoordinatorPinModal } from './components/CoordinatorPinModal';
 import { PrintModal } from './components/PrintModal';
+import { NotificationToast } from './components/NotificationToast';
 import { PanelLeftOpen } from 'lucide-react';
 
 import { DashboardView } from './views/DashboardView';
@@ -86,6 +87,7 @@ const MainContent: React.FC = () => {
       {/* Security Modals & Print Handlers */}
       <CoordinatorPinModal />
       <PrintModal />
+      <NotificationToast />
     </div>
   );
 };
