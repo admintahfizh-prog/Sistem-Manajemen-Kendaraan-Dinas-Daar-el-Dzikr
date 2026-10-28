@@ -67,7 +67,7 @@ export const LogoUploadView: React.FC = () => {
   };
 
   const handleResetToDefaultLogo = () => {
-    updateLogo('/src/assets/images/logo_daar_el_dzikr_1793160265235.jpg');
+    updateLogo('/assets/images/logo_daar_el_dzikr_1793160265235.jpg');
     setNotification('Logo dikembalikan ke lambang resmi Daar el Dzikr.');
     setTimeout(() => setNotification(null), 4000);
   };
