@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Printer, X, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Printer, X, CheckCircle2, ShieldCheck, CheckSquare } from 'lucide-react';
 
 export const PrintModal: React.FC = () => {
   const { printDoc, setPrintDoc, settings, vehicles } = useApp();
@@ -17,7 +17,7 @@ export const PrintModal: React.FC = () => {
   };
 
   const getVehicle = (vehicleId: string) => {
-    return vehicles.find((v) => v.id === vehicleId);
+    return vehicles.find((v) => v.id === vehicleId) || vehicles[0];
   };
 
   return (
@@ -31,10 +31,10 @@ export const PrintModal: React.FC = () => {
             </span>
             <span className="text-slate-400">/</span>
             <span className="text-xs text-slate-200 font-medium">
-              {printDoc.type === 'surat-jalan' && 'Surat Izin Jalan & Penugasan'}
+              {printDoc.type === 'surat-jalan' && 'Surat Tugas & Izin Jalan Kendaraan Yayasan'}
               {printDoc.type === 'bast-in' && 'Berita Acara Pengambilan (BAST IN)'}
               {printDoc.type === 'bast-return' && 'Berita Acara Pengembalian (BAST RETURN)'}
-              {printDoc.type === 'kwitansi-infaq' && 'Kwitansi Tanda Terima Infaq'}
+              {printDoc.type === 'kwitansi-infaq' && 'Kwitansi Tanda Terima Infaq Kas Kendaraan'}
             </span>
           </div>
 
@@ -67,8 +67,7 @@ export const PrintModal: React.FC = () => {
                   {settings.logoUrl ? (
                     <img
                       src={settings.logoUrl}
-                      alt="Logo Sekolah"
-                      referrerPolicy="no-referrer"
+                      alt="Logo Yayasan"
                       className="w-full h-full object-contain"
                     />
                   ) : null}
@@ -78,13 +77,13 @@ export const PrintModal: React.FC = () => {
                     {settings.foundationName}
                   </h2>
                   <h1 className="text-lg md:text-xl font-bold text-slate-900 tracking-tight">
-                    {settings.schoolName}
+                    KENDARAAN YAYASAN DAAR EL DZIKR
                   </h1>
                   <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
                     {settings.address}
                   </p>
                   <p className="text-[11px] text-slate-500 font-mono">
-                    Kontak: {settings.phone}
+                    Kontak Koordinator Sarpras: {settings.phone}
                   </p>
                 </div>
               </div>
@@ -95,16 +94,16 @@ export const PrintModal: React.FC = () => {
               <div className="space-y-5">
                 <div className="text-center">
                   <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 underline underline-offset-4">
-                    SURAT TUGAS &amp; IZIN JALAN KENDARAAN DINAS
+                    SURAT TUGAS &amp; IZIN JALAN KENDARAAN YAYASAN
                   </h3>
                   <p className="text-xs font-mono text-slate-600 mt-1">
-                    Nomor: ST-KD/{printDoc.data.bookingCode}/SARPRAS
+                    Nomor: ST-KY/{printDoc.data.bookingCode}/SARPRAS
                   </p>
                 </div>
 
                 <p className="text-xs text-justify leading-relaxed">
-                  Berdasarkan permohonan reservasi penggunaan armada dinas yang telah disetujui
-                  oleh Koordinator Sarpras Sekolah Islam Terpadu Daar el Dzikr, dengan ini memberikan izin
+                  Berdasarkan permohonan reservasi penggunaan armada yang telah disetujui
+                  oleh Koordinator Sarpras Yayasan Wakaf Pendidikan Daar el Dzikr, dengan ini memberikan izin
                   operasional jalan kepada:
                 </p>
 
@@ -113,13 +112,13 @@ export const PrintModal: React.FC = () => {
                   <div className="grid grid-cols-3 gap-2">
                     <span className="text-slate-500">Nama Pemohon</span>
                     <span className="col-span-2 font-semibold text-slate-900">
-                      : {printDoc.data.borrowerName} ({printDoc.data.borrowerRole})
+                      : {printDoc.data.borrowerName}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <span className="text-slate-500">Unit / Lembaga</span>
-                    <span className="col-span-2 font-semibold text-slate-900">
-                      : {printDoc.data.division}
+                    <span className="text-slate-500">Unit Kerja Yayasan</span>
+                    <span className="col-span-2 font-semibold text-emerald-800">
+                      : {printDoc.data.division} Daar el Dzikr
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
@@ -129,10 +128,9 @@ export const PrintModal: React.FC = () => {
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <span className="text-slate-500">Kendaraan Dinas</span>
+                    <span className="text-slate-500">Armada Yayasan</span>
                     <span className="col-span-2 font-bold text-emerald-800">
-                      : {getVehicle(printDoc.data.vehicleId)?.name} (Plat:{' '}
-                      {getVehicle(printDoc.data.vehicleId)?.plateNumber})
+                      : Suzuki APV Arena GX Luxury (Plat: B 1928 SDZ)
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
@@ -154,27 +152,29 @@ export const PrintModal: React.FC = () => {
                       {printDoc.data.endDate} ({printDoc.data.endTime})
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="text-slate-500">Pengemudi Bertugas</span>
-                    <span className="col-span-2 font-semibold text-slate-900">
-                      : {printDoc.data.driverName || printDoc.data.driverType}
-                    </span>
-                  </div>
+                  {printDoc.data.estimatedInfaq ? (
+                    <div className="grid grid-cols-3 gap-2">
+                      <span className="text-slate-500">Anjuran Infaq Pribadi</span>
+                      <span className="col-span-2 font-mono font-bold text-emerald-800">
+                        : Rp {(printDoc.data.estimatedInfaq ?? 0).toLocaleString('id-ID')} (12h/24h)
+                      </span>
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg text-[11px] text-amber-900 space-y-1">
                   <span className="font-bold block">Peringatan SOP &amp; Adab Berkendara:</span>
                   <ul className="list-disc pl-4 space-y-0.5">
-                    <li>Dilarang keras merokok atau vape di dalam kabin mobil dinas.</li>
+                    <li>Dilarang keras merokok atau vape di dalam kabin kendaraan yayasan.</li>
                     <li>Surat Izin Jalan ini wajib ditunjukkan kepada petugas pos keamanan gerbang sekolah.</li>
-                    <li>Kembalikan kendaraan tepat waktu dalam kondisi bersih dengan tangki BBM sesuai semula.</li>
+                    <li>Saat kembali: Wajib isi bensin kembali Strip 3 (Full), bayar cuci 35k jika kotor, dan pasang cover mobil tertutup.</li>
                   </ul>
                 </div>
 
                 {/* Tanda Tangan */}
                 <div className="pt-6 grid grid-cols-2 gap-8 text-xs text-center">
                   <div>
-                    <p className="text-slate-500">Pemohon / Pengemudi</p>
+                    <p className="text-slate-500">Peminjam / Pengemudi</p>
                     <div className="h-16 flex items-end justify-center">
                       <span className="font-semibold text-slate-900 border-b border-slate-900 pb-0.5">
                         {printDoc.data.borrowerName}
@@ -216,10 +216,9 @@ export const PrintModal: React.FC = () => {
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Unit Armada:</span>
+                      <span className="text-slate-500 block">Armada Yayasan:</span>
                       <span className="font-bold text-emerald-800">
-                        {getVehicle(printDoc.data.vehicleId)?.name} (
-                        {getVehicle(printDoc.data.vehicleId)?.plateNumber})
+                        Suzuki APV Arena GX Luxury (B 1928 SDZ)
                       </span>
                     </div>
                   </div>
@@ -228,13 +227,13 @@ export const PrintModal: React.FC = () => {
                     <div>
                       <span className="text-slate-500 block">Odometer Awal (KM):</span>
                       <span className="font-mono font-bold text-slate-900 text-sm">
-                        {printDoc.data.handoverIn.odometerKm.toLocaleString('id-ID')} KM
+                        {(printDoc.data.handoverIn?.odometerKm ?? 38450).toLocaleString('id-ID')} KM
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Level BBM Saat Diambil:</span>
-                      <span className="font-bold text-slate-900">
-                        Tangki {printDoc.data.handoverIn.fuelLevel}
+                      <span className="text-slate-500 block">Indikator Bensin Awal:</span>
+                      <span className="font-bold text-emerald-800">
+                        {printDoc.data.handoverIn.fuelLevel}
                       </span>
                     </div>
                   </div>
@@ -243,12 +242,12 @@ export const PrintModal: React.FC = () => {
                 {/* Checklist Fisik */}
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">
-                    Hasil Inspeksi Fisik Awal:
+                    Hasil Pemeriksaan Fisik Awal:
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-2 p-2 bg-slate-50 rounded border border-slate-200">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Kebersihan Kabin &amp; Bodi: {printDoc.data.handoverIn.interiorClean ? 'Bersih' : 'Kotor'}</span>
+                      <span>Kebersihan Kabin &amp; Bodi: Bersih Terawat</span>
                     </div>
                     <div className="flex items-center gap-2 p-2 bg-slate-50 rounded border border-slate-200">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -268,7 +267,7 @@ export const PrintModal: React.FC = () => {
                 <div className="bg-slate-50 p-3 rounded border border-slate-200 text-xs">
                   <span className="font-semibold block text-slate-700">Catatan Minus/Goresan Awal:</span>
                   <p className="italic text-slate-600 mt-0.5">
-                    {printDoc.data.handoverIn.initialDefectsNotes || 'Tidak ada catatan cacat awal (kondisi mulus).'}
+                    {printDoc.data.handoverIn.initialDefectsNotes || 'Kondisi bodi prima mulus, cover tersimpan di bagasi.'}
                   </p>
                 </div>
 
@@ -283,10 +282,10 @@ export const PrintModal: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <p className="text-slate-500">Petugas Pemeriksa Sarpras</p>
+                    <p className="text-slate-500">Koordinator Sarpras Yayasan</p>
                     <div className="h-16 flex items-end justify-center">
                       <span className="font-semibold text-slate-900 border-b border-slate-900 pb-0.5">
-                        {printDoc.data.handoverIn.inspectorName || settings.coordinatorName}
+                        {settings.coordinatorName}
                       </span>
                     </div>
                   </div>
@@ -325,11 +324,11 @@ export const PrintModal: React.FC = () => {
                     <div>
                       <span className="text-slate-500 block">Odometer Akhir:</span>
                       <span className="font-mono font-bold text-slate-900">
-                        {printDoc.data.handoverReturn.odometerKm.toLocaleString('id-ID')} KM
+                        {(printDoc.data.handoverReturn?.odometerKm ?? 38500).toLocaleString('id-ID')} KM
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Level BBM Kembali:</span>
+                      <span className="text-slate-500 block">Level BBM (3 Strip):</span>
                       <span className="font-bold text-slate-900">
                         {printDoc.data.handoverReturn.fuelLevel}
                       </span>
@@ -337,19 +336,32 @@ export const PrintModal: React.FC = () => {
                     <div>
                       <span className="text-slate-500 block">Status Kebersihan:</span>
                       <span className="font-bold text-slate-900">
-                        {printDoc.data.handoverReturn.isWashed ? 'Sudah Dicuci Bersih' : 'Perlu Dicuci'}
+                        {printDoc.data.handoverReturn.isWashed ? 'Bersih' : 'Kotor (Denda 35k)'}
                       </span>
                     </div>
                   </div>
                 </div>
 
+                {/* Mandatory Cover Mobil Status */}
+                <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-lg flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <CheckSquare className="w-4 h-4 text-emerald-700" />
+                    <span className="font-bold text-emerald-950">
+                      Cover Mobil Tertutup Rapi:
+                    </span>
+                  </div>
+                  <span className="font-bold text-emerald-800 bg-white px-2.5 py-0.5 rounded border border-emerald-300">
+                    {printDoc.data.handoverReturn.carCoverClosed ? 'Ya, Terpasang Rapi' : 'Belum Terpasang'}
+                  </span>
+                </div>
+
                 {printDoc.data.handoverReturn.extraCleaningFee > 0 && (
                   <div className="bg-rose-50 border border-rose-200 p-3 rounded-lg text-xs text-rose-800">
-                    <span className="font-bold block">Biaya Tambahan Kebersihan:</span>
+                    <span className="font-bold block">Biaya Pengganti Cuci Armada:</span>
                     <p>
-                      Kendaraan dikembalikan kotor sehingga dikenakan infaq cuci armada sebesar{' '}
+                      Kendaraan dikembalikan kotor sehingga dikenakan biaya cuci steam sebesar{' '}
                       <span className="font-mono font-bold">
-                        Rp {printDoc.data.handoverReturn.extraCleaningFee.toLocaleString('id-ID')}
+                        Rp {(printDoc.data.handoverReturn?.extraCleaningFee ?? 0).toLocaleString('id-ID')} (35k)
                       </span>{' '}
                       sesuai klausul SOP Bab V.
                     </p>
@@ -359,7 +371,7 @@ export const PrintModal: React.FC = () => {
                 <div className="bg-slate-50 p-3 rounded border border-slate-200 text-xs">
                   <span className="font-semibold block text-slate-700">Hasil Pemeriksaan Pasca Perjalanan:</span>
                   <p className="italic text-slate-600 mt-0.5">
-                    {printDoc.data.handoverReturn.newDefectsNotes || 'Kondisi kendaraan utuh dan prima tanpa kendala baru.'}
+                    {printDoc.data.handoverReturn.newDefectsNotes || 'Kondisi kendaraan utuh dan prima tanpa cacat baru.'}
                   </p>
                 </div>
 
@@ -374,10 +386,10 @@ export const PrintModal: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <p className="text-slate-500">Petugas Penerima Sarpras</p>
+                    <p className="text-slate-500">Koordinator Sarpras Yayasan</p>
                     <div className="h-16 flex items-end justify-center">
                       <span className="font-semibold text-slate-900 border-b border-slate-900 pb-0.5">
-                        {printDoc.data.handoverReturn.inspectorName || settings.coordinatorName}
+                        {settings.coordinatorName}
                       </span>
                     </div>
                   </div>
@@ -389,7 +401,7 @@ export const PrintModal: React.FC = () => {
               <div className="space-y-4">
                 <div className="text-center">
                   <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 underline underline-offset-4">
-                    TANDA TERIMA RESMI INFAQ PEMELIHARAAN ARMADA
+                    TANDA TERIMA RESMI INFAQ KAS KENDARAAN YAYASAN
                   </h3>
                   <p className="text-xs font-mono text-slate-600 mt-1">
                     No. Kwitansi: {printDoc.data.receiptNo}
@@ -400,13 +412,13 @@ export const PrintModal: React.FC = () => {
                   <div className="grid grid-cols-3 gap-2">
                     <span className="text-slate-500">Telah Diterima Dari</span>
                     <span className="col-span-2 font-bold text-slate-900 text-sm">
-                      : {printDoc.data.contributorName} ({printDoc.data.division})
+                      : {printDoc.data.contributorName} (Unit: {printDoc.data.division})
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <span className="text-slate-500">Jumlah Infaq</span>
                     <span className="col-span-2 font-mono font-bold text-emerald-800 text-lg">
-                      : Rp {printDoc.data.amount.toLocaleString('id-ID')}
+                      : Rp {(printDoc.data?.amount ?? 0).toLocaleString('id-ID')}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
@@ -424,19 +436,19 @@ export const PrintModal: React.FC = () => {
                   <div className="grid grid-cols-3 gap-2">
                     <span className="text-slate-500">Catatan Peruntukan</span>
                     <span className="col-span-2 italic text-slate-600">
-                      : {printDoc.data.notes || 'Tabungan kas pemeliharaan & servis berkala armada Daar el Dzikr.'}
+                      : {printDoc.data.notes || 'Kas pemeliharaan & servis berkala Suzuki APV Daar el Dzikr.'}
                     </span>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-slate-500 text-center italic">
-                  &quot;Jazakumullah khairan katsiran atas infaq pemeliharaan kendaraan dinas. Semoga menjadi amal jariyah yang penuh berkah.&quot;
+                  &quot;Jazakumullah khairan katsiran atas infaq pemeliharaan kendaraan yayasan. Semoga menjadi amal jariyah yang penuh berkah.&quot;
                 </p>
 
                 {/* Tanda Tangan */}
                 <div className="pt-6 grid grid-cols-2 gap-8 text-xs text-center">
                   <div>
-                    <p className="text-slate-500">Penyetor / Muqarrid</p>
+                    <p className="text-slate-500">Penyetor / Peminjam</p>
                     <div className="h-16 flex items-end justify-center">
                       <span className="font-semibold text-slate-900 border-b border-slate-900 pb-0.5">
                         {printDoc.data.contributorName}
@@ -444,7 +456,7 @@ export const PrintModal: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <p className="text-slate-500">Penerima Kasir Sarpras</p>
+                    <p className="text-slate-500">Koordinator Sarpras Yayasan</p>
                     <div className="h-16 flex items-end justify-center">
                       <span className="font-semibold text-slate-900 border-b border-slate-900 pb-0.5">
                         {printDoc.data.receivedBy || settings.coordinatorName}

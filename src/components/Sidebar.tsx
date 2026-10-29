@@ -21,6 +21,9 @@ import {
   ChevronRight,
   School,
   PanelLeftClose,
+  Edit3,
+  CreditCard,
+  Settings,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -56,13 +59,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
   }[] = [
     {
       id: 'dashboard',
-      label: 'Dashboard & Rekap',
+      label: 'Dashboard & SOP',
       icon: LayoutDashboard,
       category: 'Utama',
     },
     {
       id: 'armada',
-      label: 'Daftar Armada Mobil',
+      label: 'Armada Suzuki APV',
       icon: Truck,
       category: 'Utama',
     },
@@ -83,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
     },
     {
       id: 'pengambilan',
-      label: 'Pengambilan Kendaraan',
+      label: 'BAST Pengambilan (BBM 3 Strip)',
       icon: KeyRound,
       badge: readyToPickupCount > 0 ? readyToPickupCount : undefined,
       badgeColor: 'bg-emerald-600 text-white',
@@ -91,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
     },
     {
       id: 'pengembalian',
-      label: 'Pengembalian Kendaraan',
+      label: 'BAST Pengembalian (Cuci & Cover)',
       icon: RotateCcw,
       badge: inTripCount > 0 ? inTripCount : undefined,
       badgeColor: 'bg-blue-600 text-white',
@@ -99,22 +102,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
     },
     {
       id: 'infaq',
-      label: 'Perorangan & Infaq',
+      label: 'Infaq Pemakaian Pribadi',
       icon: HeartHandshake,
-      category: 'Keuangan & Sosial',
+      category: 'Kas & Infaq',
+    },
+    {
+      id: 'settings',
+      label: 'Pengaturan (Koordinator)',
+      icon: Settings,
+      badge: pendingAccCount > 0 ? pendingAccCount : undefined,
+      badgeColor: 'bg-amber-500 text-white',
+      coordinatorOnly: true,
+      category: 'Khusus Koordinator',
     },
     {
       id: 'sop',
-      label: 'SOP & Klausul Dinas',
+      label: 'SOP & Klausul Yayasan',
       icon: BookOpenCheck,
       category: 'Panduan & Regulasi',
-    },
-    {
-      id: 'logo-sekolah',
-      label: 'Upload Logo & Sarpras',
-      icon: ImageUp,
-      coordinatorOnly: true,
-      category: 'Pengaturan',
     },
     {
       id: 'petunjuk',

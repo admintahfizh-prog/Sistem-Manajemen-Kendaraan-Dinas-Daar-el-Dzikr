@@ -5,17 +5,16 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { HandoverIn } from '../types';
+import { HandoverIn, FuelStripLevel } from '../types';
 import {
   KeyRound,
   CheckCircle2,
-  Clock,
   Gauge,
   Fuel,
-  FileCheck2,
   Printer,
   Car,
   AlertCircle,
+  FileCheck2,
 } from 'lucide-react';
 
 export const PengambilanView: React.FC = () => {
@@ -24,7 +23,6 @@ export const PengambilanView: React.FC = () => {
     vehicles,
     submitHandoverIn,
     setPrintDoc,
-    settings,
     setActiveTab,
   } = useApp();
 
@@ -37,7 +35,7 @@ export const PengambilanView: React.FC = () => {
   );
 
   const activeBooking = bookings.find((b) => b.id === selectedBookingId);
-  const activeVehicle = vehicles.find((v) => v.id === activeBooking?.vehicleId);
+  const activeVehicle = vehicles.find((v) => v.id === activeBooking?.vehicleId) || vehicles[0];
 
   // Form State
   const now = new Date();
@@ -47,8 +45,8 @@ export const PengambilanView: React.FC = () => {
   const [formData, setFormData] = useState({
     date: dateStr,
     time: timeStr,
-    odometerKm: activeVehicle?.odometerKm || 20000,
-    fuelLevel: 'Full' as HandoverIn['fuelLevel'],
+    odometerKm: activeVehicle?.odometerKm || 38450,
+    fuelLevel: 'Strip 3 (Full / Penuh)' as FuelStripLevel,
     interiorClean: true,
     exteriorClean: true,
     tiresCondition: true,
@@ -58,11 +56,9 @@ export const PengambilanView: React.FC = () => {
     toolsAndSpareTire: true,
     stnkAndKeys: true,
     initialDefectsNotes: '',
-    inspectorName: settings.coordinatorName,
     borrowerSignatureName: activeBooking?.borrowerName || '',
   });
 
-  // Keep odometer in sync when vehicle changes
   const handleSelectBooking = (id: string) => {
     setSelectedBookingId(id);
     const b = bookings.find((item) => item.id === id);
@@ -90,7 +86,6 @@ export const PengambilanView: React.FC = () => {
 
     const target = bookings.find((b) => b.id === selectedBookingId);
     if (target) {
-      // Auto open print modal
       setPrintDoc({
         type: 'bast-in',
         data: {
@@ -112,10 +107,10 @@ export const PengambilanView: React.FC = () => {
         <div>
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <KeyRound className="w-5 h-5 text-emerald-700" />
-            Berita Acara Pengambilan Kendaraan (Check-out Serah Terima)
+            Berita Acara Pengambilan Kendaraan Yayasan (BAST IN)
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Pemeriksaan kondisi fisik, KM awal, dan level BBM sebelum kunci diserahkan ke pengemudi
+            Pemeriksaan kondisi fisik Suzuki APV, Odometer KM awal, dan level Bensin (Indikator 3 Strip)
           </p>
         </div>
 
@@ -129,7 +124,7 @@ export const PengambilanView: React.FC = () => {
           <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
           <p className="font-bold text-slate-800 text-sm">Tidak ada booking yang siap diambil saat ini.</p>
           <p className="max-w-md mx-auto text-slate-500">
-            Pastikan permohonan booking telah berstatus &quot;Disetujui&quot; oleh Koordinator Sarpras pada menu ACC Koordinator.
+            Pastikan permohonan booking telah disetujui (ACC) oleh Koordinator Sarpras pada menu ACC Koordinator.
           </p>
           <button
             type="button"
@@ -144,53 +139,45 @@ export const PengambilanView: React.FC = () => {
           {/* Step 1: Select Approved Booking */}
           <div>
             <label className="block font-bold text-slate-800 mb-2 uppercase tracking-wider text-[11px]">
-              1. Pilih Permohonan Booking yang Disetujui *
+              1. Pilih Permohonan Booking yang Telah Di-ACC *
             </label>
             <select
               value={selectedBookingId}
               onChange={(e) => handleSelectBooking(e.target.value)}
               className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-medium text-slate-900 text-xs"
             >
-              {readyBookings.map((b) => {
-                const v = vehicles.find((item) => item.id === b.vehicleId);
-                return (
-                  <option key={b.id} value={b.id}>
-                    [{b.bookingCode}] {b.borrowerName} ({b.division}) &mdash; {v?.name} ({b.startDate} {b.startTime})
-                  </option>
-                );
-              })}
+              {readyBookings.map((b) => (
+                <option key={b.id} value={b.id}>
+                  [{b.bookingCode}] {b.borrowerName} (Unit: {b.division}) &mdash; Suzuki APV ({b.startDate} {b.startTime})
+                </option>
+              ))}
             </select>
 
-            {activeBooking && activeVehicle && (
-              <div className="mt-3 p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl grid grid-cols-1 md:grid-cols-4 gap-3">
+            {activeBooking && (
+              <div className="mt-3 p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <span className="text-[10px] uppercase font-semibold text-emerald-800 block">Unit Armada</span>
-                  <p className="font-bold text-slate-900">{activeVehicle.name}</p>
-                  <p className="font-mono text-emerald-900 text-[11px]">{activeVehicle.plateNumber}</p>
+                  <span className="text-[10px] uppercase font-semibold text-emerald-800 block">Armada Yayasan</span>
+                  <p className="font-bold text-slate-900">Suzuki APV Arena GX Luxury</p>
+                  <p className="font-mono text-emerald-900 text-[11px]">B 1928 SDZ</p>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase font-semibold text-emerald-800 block">Peminjam / Unit</span>
+                  <span className="text-[10px] uppercase font-semibold text-emerald-800 block">Peminjam &amp; Unit Kerja</span>
                   <p className="font-bold text-slate-900">{activeBooking.borrowerName}</p>
-                  <p className="text-slate-600 text-[11px]">{activeBooking.division}</p>
+                  <p className="text-emerald-800 font-semibold text-[11px]">{activeBooking.division} Daar el Dzikr</p>
                 </div>
                 <div>
                   <span className="text-[10px] uppercase font-semibold text-emerald-800 block">Tujuan &amp; Agenda</span>
                   <p className="font-semibold text-slate-900 truncate">{activeBooking.destination}</p>
                   <p className="text-slate-600 text-[11px] truncate">{activeBooking.purpose}</p>
                 </div>
-                <div>
-                  <span className="text-[10px] uppercase font-semibold text-emerald-800 block">Sopir Bertugas</span>
-                  <p className="font-semibold text-slate-900">{activeBooking.driverName || activeBooking.driverType}</p>
-                  <p className="text-[11px] text-slate-500 font-mono">WA: {activeBooking.phone}</p>
-                </div>
               </div>
             )}
           </div>
 
-          {/* Step 2: Waktu & Indikator Awal */}
+          {/* Step 2: Waktu & Indikator Awal (3 Strip BBM) */}
           <div className="pt-4 border-t border-slate-100">
             <label className="block font-bold text-slate-800 mb-3 uppercase tracking-wider text-[11px]">
-              2. Tanggal, Jam Aktual &amp; Indikator Odometer / BBM
+              2. Tanggal, Jam Aktual &amp; Indikator BBM 3 Strip
             </label>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -228,22 +215,60 @@ export const PengambilanView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Indikator BBM Awal *</label>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Level Bensin (Sistem 3 Strip) *
+                </label>
                 <select
                   value={formData.fuelLevel}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      fuelLevel: e.target.value as HandoverIn['fuelLevel'],
+                      fuelLevel: e.target.value as FuelStripLevel,
                     })
                   }
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-semibold"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-emerald-900"
                 >
-                  <option value="Full">Full (Penuh 100%)</option>
-                  <option value="3/4">3/4 Tangki</option>
-                  <option value="1/2">1/2 Tangki</option>
-                  <option value="1/4">1/4 Tangki</option>
+                  <option value="Strip 3 (Full / Penuh)">Strip 3 (Full / Penuh) - Standar Serah</option>
+                  <option value="Strip 2 (Sedang)">Strip 2 (Sedang)</option>
+                  <option value="Strip 1 (E / Rendah)">Strip 1 (E / Rendah)</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Visual 3-Strip Meter */}
+            <div className="mt-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-slate-700">
+                <Fuel className="w-4 h-4 text-emerald-700" />
+                <span className="font-semibold">Indikator Bensin 3 Strip:</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div
+                  className={`px-3 py-1 rounded-lg font-mono font-bold text-xs ${
+                    formData.fuelLevel === 'Strip 1 (E / Rendah)'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  [ 1 ] Rendah
+                </div>
+                <div
+                  className={`px-3 py-1 rounded-lg font-mono font-bold text-xs ${
+                    formData.fuelLevel === 'Strip 2 (Sedang)'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  [ 2 ] Sedang
+                </div>
+                <div
+                  className={`px-3 py-1 rounded-lg font-mono font-bold text-xs ${
+                    formData.fuelLevel === 'Strip 3 (Full / Penuh)'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  [ 3 ] Full Penuh
+                </div>
               </div>
             </div>
           </div>
@@ -258,82 +283,72 @@ export const PengambilanView: React.FC = () => {
               {[
                 { key: 'interiorClean', label: 'Kebersihan Kabin & Jok (Bebas sampah & wangi)' },
                 { key: 'exteriorClean', label: 'Kebersihan Bodi Luar & Kaca Spion' },
-                { key: 'tiresCondition', label: 'Tekanan Angin 4 Ban & Ketebalan Alur Ban' },
-                { key: 'lightsAndHorn', label: 'Lampu Depan, Sein, Lampu Rem & Klakson Berfungsi' },
-                { key: 'brakesAndEngine', label: 'Rem Kaki, Rem Tangan & Temperatur Mesin Normal' },
-                { key: 'acWorking', label: 'AC Berfungsi Dingin & Hembusan Kencang' },
-                { key: 'toolsAndSpareTire', label: 'Perkakas Toolkit, Dongkrak & Ban Serep Lengkap' },
-                { key: 'stnkAndKeys', label: 'STNK Asli Berlaku & Kunci Kontak Mobil Diserahkan' },
+                { key: 'tiresCondition', label: 'Kondisi 4 Roda & Tekanan Angin Normal' },
+                { key: 'lightsAndHorn', label: 'Lampu Utama, Rem, Sein, & Klakson Berfungsi Normal' },
+                { key: 'brakesAndEngine', label: 'Sistem Rem & Suara Mesin Normal' },
+                { key: 'acWorking', label: 'AC Dingin & Hembusan Blower Normal' },
+                { key: 'toolsAndSpareTire', label: 'Dongkrak, Kunci Roda, & Ban Serep Tersedia' },
+                { key: 'stnkAndKeys', label: 'STNK Asli & Kunci Kontak Resmi Diterima' },
               ].map((item) => (
                 <label
                   key={item.key}
-                  className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl cursor-pointer transition-colors"
+                  className="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer"
                 >
                   <input
                     type="checkbox"
-                    checked={(formData as any)[item.key]}
+                    checked={formData[item.key as keyof typeof formData] as boolean}
                     onChange={(e) =>
-                      setFormData({ ...formData, [item.key]: e.target.checked })
+                      setFormData({
+                        ...formData,
+                        [item.key]: e.target.checked,
+                      })
                     }
-                    className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                    className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300"
                   />
                   <span className="font-medium text-slate-800">{item.label}</span>
                 </label>
               ))}
             </div>
-
-            <div className="mt-4">
-              <label className="block font-semibold text-slate-700 mb-1">
-                Catatan Goresan / Cacat Minus Awal (Sebelum Jalan)
-              </label>
-              <input
-                type="text"
-                placeholder="Contoh: Baret tipis di bemper kiri bawah; kondisi interior rapi dan wangi."
-                value={formData.initialDefectsNotes}
-                onChange={(e) => setFormData({ ...formData, initialDefectsNotes: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl"
-              />
-            </div>
           </div>
 
-          {/* Step 4: Tanda Tangan / Nama Pemeriksa */}
-          <div className="pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Nama Penerima Kunci / Pemohon *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.borrowerSignatureName}
-                onChange={(e) =>
-                  setFormData({ ...formData, borrowerSignatureName: e.target.value })
-                }
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Petugas Inspeksi Sarpras *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.inspectorName}
-                onChange={(e) => setFormData({ ...formData, inspectorName: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl"
-              />
-            </div>
+          {/* Step 4: Catatan Cacat Awal */}
+          <div className="pt-4 border-t border-slate-100">
+            <label className="block font-semibold text-slate-700 mb-1">
+              Catatan Kondisi Khusus / Goresan Bodi Awal (Opsional)
+            </label>
+            <input
+              type="text"
+              placeholder="Contoh: Bodi mulus bersih, cover sarung mobil tersimpan rapi di bagasi belakang."
+              value={formData.initialDefectsNotes}
+              onChange={(e) => setFormData({ ...formData, initialDefectsNotes: e.target.value })}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white"
+            />
+          </div>
+
+          {/* Step 5: Tanda Tangan Penerima Kunci */}
+          <div className="pt-4 border-t border-slate-100">
+            <label className="block font-semibold text-slate-700 mb-1">
+              Nama Lengkap Penerima Kunci / Peminjam *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.borrowerSignatureName}
+              onChange={(e) =>
+                setFormData({ ...formData, borrowerSignatureName: e.target.value })
+              }
+              className="w-full max-w-md px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900"
+            />
           </div>
 
           {/* Submit Action */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold shadow-xs flex items-center gap-2 transition-colors"
+              className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 transition-colors"
             >
               <CheckCircle2 className="w-4 h-4" />
-              Selesaikan BAST Pengambilan &amp; Cetak Berkas
+              Selesaikan BAST Pengambilan (IN) &amp; Cetak Berkas
             </button>
           </div>
         </form>
@@ -346,48 +361,45 @@ export const PengambilanView: React.FC = () => {
         </h3>
 
         <div className="space-y-3">
-          {checkedOutBookings.map((b) => {
-            const v = vehicles.find((item) => item.id === b.vehicleId);
-            return (
-              <div
-                key={b.id}
-                className="p-4 rounded-xl border border-slate-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-slate-800">{b.bookingCode}</span>
-                    <span className="text-slate-400">·</span>
-                    <span className="font-bold text-slate-900">{b.borrowerName}</span>
-                    <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
-                      Kunci Telah Diserahkan
-                    </span>
-                  </div>
-
-                  <p className="text-slate-600 mt-1">
-                    Diambil: <strong className="font-mono">{b.handoverIn?.date} {b.handoverIn?.time}</strong> · Odometer Awal:{' '}
-                    <strong className="font-mono">{b.handoverIn?.odometerKm.toLocaleString('id-ID')} KM</strong> · BBM: {b.handoverIn?.fuelLevel}
-                  </p>
-                  <p className="text-[11px] text-slate-500">
-                    Inspektur: {b.handoverIn?.inspectorName} · Catatan: {b.handoverIn?.initialDefectsNotes || 'Kondisi prima mulus.'}
-                  </p>
+          {checkedOutBookings.map((b) => (
+            <div
+              key={b.id}
+              className="p-4 rounded-xl border border-slate-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-bold text-slate-800">{b.bookingCode}</span>
+                  <span className="text-slate-400">·</span>
+                  <span className="font-bold text-slate-900">{b.borrowerName}</span>
+                  <span className="text-emerald-800 font-semibold bg-emerald-100 px-2 py-0.5 rounded text-[10px]">
+                    {b.division}
+                  </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPrintDoc({
-                      type: 'bast-in',
-                      data: b,
-                    })
-                  }
-                  className="px-3.5 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-emerald-700 rounded-xl font-semibold flex items-center gap-1.5 transition-colors shrink-0 shadow-2xs"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  Cetak BAST IN
-                </button>
+                <p className="text-slate-600 mt-1">
+                  Diambil: <strong className="font-mono">{b.handoverIn?.date} {b.handoverIn?.time}</strong> · Odometer Awal:{' '}
+                  <strong className="font-mono">{(b.handoverIn?.odometerKm ?? 38450).toLocaleString('id-ID')} KM</strong> · Level BBM: <strong>{b.handoverIn?.fuelLevel}</strong>
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  Penerima Kunci: {b.handoverIn?.borrowerSignatureName} · Catatan: {b.handoverIn?.initialDefectsNotes || 'Kondisi prima mulus.'}
+                </p>
               </div>
-            );
-          })}
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPrintDoc({
+                    type: 'bast-in',
+                    data: b,
+                  })
+                }
+                className="px-3.5 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-emerald-700 rounded-xl font-semibold flex items-center gap-1.5 transition-colors shrink-0 shadow-2xs"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                Cetak BAST IN
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>

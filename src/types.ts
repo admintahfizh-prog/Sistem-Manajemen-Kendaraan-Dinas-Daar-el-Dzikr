@@ -4,14 +4,14 @@
  */
 
 export type VehicleStatus = 'Tersedia' | 'Digunakan' | 'Dalam Servis' | 'Dibooking';
-export type FuelType = 'Solar / Dexlite' | 'Pertalite / Pertamax' | 'Listrik / EV';
-export type VehicleType = 'Bus / Minibus Sekolah' | 'Mobil Dinas MPV / SUV' | 'Mobil Operasional Box' | 'Sepeda Motor Patroli';
+export type FuelType = 'Pertalite / Pertamax' | 'Solar / Dexlite';
+export type VehicleType = 'Suzuki APV Yayasan';
 
 export interface Vehicle {
   id: string;
   name: string;
   plateNumber: string;
-  type: VehicleType;
+  type: string;
   capacity: number;
   fuelType: FuelType;
   odometerKm: number;
@@ -19,7 +19,6 @@ export interface Vehicle {
   imageUrl: string;
   lastServiceDate: string;
   nextServiceKm: number;
-  assignedDriver?: string;
   notes?: string;
 }
 
@@ -32,10 +31,23 @@ export type BookingStatus =
   | 'Dibatalkan';
 
 export type PurposeCategory =
-  | 'Kedinasan Sekolah'
-  | 'Kegiatan Yayasan'
-  | 'Antar Jemput Santri / Lomba'
-  | 'Perorangan / Pribadi Guru';
+  | 'Kedinasan Yayasan'
+  | 'Kegiatan Santri / Lembaga'
+  | 'Keperluan Pribadi / Keluarga';
+
+export type UnitKerja =
+  | 'PAUD'
+  | 'SD'
+  | 'SMP'
+  | 'MA'
+  | 'Pesantren'
+  | 'Yayasan'
+  | 'Pribadi';
+
+export type FuelStripLevel =
+  | 'Strip 1 (E / Rendah)'
+  | 'Strip 2 (Sedang)'
+  | 'Strip 3 (Full / Penuh)';
 
 export interface HandoverIn {
   id: string;
@@ -43,7 +55,7 @@ export interface HandoverIn {
   date: string;
   time: string;
   odometerKm: number;
-  fuelLevel: '1/4' | '1/2' | '3/4' | 'Full';
+  fuelLevel: FuelStripLevel;
   interiorClean: boolean;
   exteriorClean: boolean;
   tiresCondition: boolean;
@@ -53,7 +65,6 @@ export interface HandoverIn {
   toolsAndSpareTire: boolean;
   stnkAndKeys: boolean;
   initialDefectsNotes: string;
-  inspectorName: string;
   borrowerSignatureName: string;
 }
 
@@ -63,12 +74,12 @@ export interface HandoverReturn {
   date: string;
   time: string;
   odometerKm: number;
-  fuelLevel: '1/4' | '1/2' | '3/4' | 'Full';
+  fuelLevel: FuelStripLevel;
   interiorClean: boolean;
   exteriorClean: boolean;
   isWashed: boolean;
+  carCoverClosed: boolean;
   newDefectsNotes: string;
-  inspectorName: string;
   returneeSignatureName: string;
   lateMinutes: number;
   distanceTraveledKm: number;
@@ -81,8 +92,7 @@ export interface Booking {
   bookingCode: string;
   vehicleId: string;
   borrowerName: string;
-  borrowerRole: 'Guru' | 'Staf' | 'Pimpinan Yayasan' | 'Santri / Panitia';
-  division: 'SD Daar el Dzikr' | 'SMP Daar el Dzikr' | 'SMA Daar el Dzikr' | 'Pondok Pesantren' | 'Yayasan Daar el Dzikr';
+  division: UnitKerja;
   phone: string;
   destination: string;
   purpose: string;
@@ -91,9 +101,7 @@ export interface Booking {
   startTime: string;
   endDate: string;
   endTime: string;
-  passengerCount: number;
-  driverType: 'Sopir Sekolah' | 'Bawa Sendiri (SIM A/B1 Sah)';
-  driverName?: string;
+  durationHours?: number;
   status: BookingStatus;
   coordinatorNotes?: string;
   rejectionReason?: string;
@@ -114,9 +122,9 @@ export interface InfaqRecord {
   vehicleName: string;
   purpose: string;
   distanceKm: number;
-  durationDays: number;
+  durationHours: number;
   amount: number;
-  paymentMethod: 'Tunai di Kasir Sarpras' | 'Transfer Bank Syariah Indonesia (BSI)';
+  paymentMethod: 'Tunai di Kasir Sarpras' | 'Transfer Bank Yayasan';
   notes: string;
   receivedBy: string;
 }
@@ -131,9 +139,16 @@ export interface SchoolSettings {
   coordinatorPhone: string;
   coordinatorPin: string;
   logoUrl: string;
-  defaultInfaqPerDay: number;
-  defaultInfaqPerKm: number;
+  sopPdfUrl?: string;
+  sopPdfName?: string;
+  infaq12Hours: number;
+  infaq24Hours: number;
   washingPenaltyAmount: number;
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountHolder: string;
+  bankConfirmationPhone: string;
+  bankNotes: string;
 }
 
 export type NotificationType =
@@ -152,4 +167,16 @@ export interface AppNotification {
   read: boolean;
   bookingCode?: string;
   actionTab?: 'acc-coordinator' | 'pengambilan' | 'pengembalian' | 'booking' | 'infaq';
+}
+
+export interface SopPoint {
+  no: string;
+  title: string;
+  content: string;
+}
+
+export interface SopChapter {
+  chapter: string;
+  title: string;
+  points: SopPoint[];
 }

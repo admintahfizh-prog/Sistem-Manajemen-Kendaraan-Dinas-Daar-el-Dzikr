@@ -14,12 +14,12 @@ import {
   HeartHandshake,
   CheckCircle2,
   AlertTriangle,
-  PhoneCall,
   ChevronDown,
   ChevronUp,
   ArrowRight,
-  Shield,
   FileText,
+  Edit3,
+  CreditCard,
 } from 'lucide-react';
 
 export const PetunjukPenggunaanView: React.FC = () => {
@@ -30,75 +30,74 @@ export const PetunjukPenggunaanView: React.FC = () => {
     {
       step: '01',
       title: 'Pengajuan Booking (Hari & Jam)',
-      role: 'Guru / Staf Pemohon',
-      desc: 'Pemohon mengisi formulir booking dengan memilih unit armada yang tersedia, mengisi tanggal & jam keberangkatan serta kepulangan, tujuan perjalanan, dan kategori kepentingan.',
+      role: 'PAUD, SD, SMP, MA, Pesantren, Yayasan, Pribadi',
+      desc: 'Pemohon memilih unit kerja yang sesuai, mengisikan tanggal & jam berangkat serta selesai, kota tujuan, dan deskripsi agenda peminjaman Suzuki APV.',
       tabTarget: 'booking',
       actionText: 'Buka Form Booking',
       icon: CalendarDays,
-      accent: 'emerald',
     },
     {
       step: '02',
-      title: 'Pemeriksaan & ACC Koordinator',
-      role: 'Koordinator Sarpras (Akun Khusus)',
-      desc: 'Koordinator sarpras masuk menggunakan PIN otorisasi khusus (default: 1234), memeriksa jadwal agar tidak bentrok, menunjuk sopir bertugas, dan memberikan persetujuan (ACC).',
+      title: 'Otorisasi & Persetujuan ACC Koordinator',
+      role: 'Koordinator Sarpras (Akun Khusus PIN)',
+      desc: 'Koordinator sarpras masuk menggunakan PIN otorisasi (default: 1234), memeriksa jadwal, memastikan prioritas santri/yayasan, dan memberikan ACC resmi yang menerbitkan Surat Tugas Izin Jalan.',
       tabTarget: 'acc-coordinator',
       actionText: 'Buka Panel ACC',
       icon: ShieldCheck,
-      accent: 'amber',
     },
     {
       step: '03',
       title: 'Serah Terima Pengambilan (BAST IN)',
-      role: 'Peminjam + Petugas Sarpras',
-      desc: 'Saat hendak berangkat, peminjam bersama petugas melakukan cek fisik bersama: mencatat KM Odometer awal, level BBM, AC, rem, ban, dan kelengkapan STNK asli & kunci kontak.',
+      role: 'Peminjam Kendaraan Yayasan',
+      desc: 'Saat penyerahan kunci, peminjam memeriksa Odometer awal, mencatat level bensin dengan patokan 3 Strip (standar Strip 3 Full), dan menandatangani Berita Acara Pengambilan.',
       tabTarget: 'pengambilan',
-      actionText: 'Buka Form Pengambilan',
+      actionText: 'Buka Form BAST IN',
       icon: KeyRound,
-      accent: 'blue',
     },
     {
       step: '04',
-      title: 'Pelaksanaan Perjalanan & Adab SOP',
-      role: 'Pengemudi / Rombongan',
-      desc: 'Menjalankan perjalanan dengan adab santun islami, dilarang merokok di kabin, menjaga nama baik almamater Daar el Dzikr, dan mengemudi sesuai rambu lalu lintas.',
+      title: 'Pelaksanaan Perjalanan & Kepatuhan SOP',
+      role: 'Peminjam / Seluruh Penumpang',
+      desc: 'Menjalankan perjalanan dengan adab santun islami, dilarang merokok/vape di dalam kabin, menjaga nama baik almamater Yayasan Daar el Dzikr, dan mengemudi tertib lalu lintas.',
       tabTarget: 'sop',
-      actionText: 'Baca Klausul SOP',
+      actionText: 'Lihat Klausul SOP',
       icon: FileText,
-      accent: 'purple',
     },
     {
       step: '05',
-      title: 'Serah Terima Pengembalian & Infaq',
-      role: 'Peminjam + Petugas Sarpras',
-      desc: 'Setelah perjalanan usai, mobil dikembalikan. Petugas memeriksa KM akhir (selisih jarak), memastikan BBM sesuai level awal, dan memeriksa kebersihan kabin. Jika pemakaian perorangan, diterbitkan kwitansi infaq.',
+      title: 'Serah Terima Pengembalian (BAST RETURN)',
+      role: 'Peminjam + Kas Sarpras',
+      desc: 'Setelah perjalanan, mobil diparkir di garasi yayasan. Peminjam memastikan bensin kembali Strip 3 Full, memasang Cover Mobil Tertutup Rapi, dan membayar kompensasi cuci 35k jika mobil kotor.',
       tabTarget: 'pengembalian',
-      actionText: 'Buka Form Pengembalian',
+      actionText: 'Buka Form BAST Return',
       icon: RotateCcw,
-      accent: 'rose',
     },
   ];
 
   const faqs = [
     {
-      q: 'Bagaimana cara masuk sebagai Koordinator Sarpras untuk melakukan ACC?',
-      a: 'Klik tombol "Masuk Akun Koordinator" di pojok kiri bawah sidebar atau pada header atas, lalu masukkan PIN default (1234). Setelah masuk, Anda memiliki hak penuh untuk menyetujui, menolak, mengelola armada, dan mengunggah logo sekolah.',
+      q: 'Bagaimana cara masuk sebagai Koordinator Sarpras untuk melakukan ACC dan mengedit aturan?',
+      a: 'Klik tombol "Masuk Koordinator" di header atau sidebar, lalu masukkan PIN default (1234). Setelah masuk, Koordinator dapat meng-ACC booking, mengedit klausul SOP, mengedit nomor rekening & tarif infaq, serta mengunggah logo yayasan.',
     },
     {
-      q: 'Apa yang terjadi jika tanggal dan jam booking bertabrakan dengan peminjam lain?',
-      a: 'Sistem memiliki deteksi bentrok jadwal otomatis (conflict detector). Jika terjadi tumpang tindih waktu pada unit mobil yang sama, sistem akan memunculkan peringatan. Koordinator dapat mengalihkan permohonan ke unit armada lain yang masih longgar.',
+      q: 'Berapakah ketentuan anjuran infaq pemeliharaan untuk peminjaman pribadi?',
+      a: 'Sesuai SOP Bab IV, peminjaman kategori Pribadi dikenakan kompensasi kas kendaraan yayasan: Durasi sampai dengan 12 Jam sebesar Rp 50.000 (50rb), dan Durasi sampai dengan 24 Jam (1 Hari) sebesar Rp 100.000 (100rb).',
     },
     {
-      q: 'Berapakah anjuran infaq pemeliharaan untuk pemakaian perorangan/keluarga guru?',
-      a: 'Sesuai SOP Bab IV, peminjaman untuk hajat pribadi keluarga guru dianjurkan menyalurkan infaq pemeliharaan sebesar Rp 175.000 / hari atau Rp 1.500 / KM. Dana 100% dialokasikan kembali ke kas sarpras untuk servis berkala, ganti ban, dan oli.',
+      q: 'Bagaimana ketentuan indikator bensin 3 strip pada Suzuki APV?',
+      a: 'Indikator bensin Suzuki APV dipatok dalam 3 strip: Strip 1 (Rendah), Strip 2 (Sedang), dan Strip 3 (Full/Penuh). Mobil diserahkan dalam keadaan Strip 3 (Full) dan peminjam wajib mengembalikannya dalam posisi Strip 3 (Full).',
     },
     {
-      q: 'Bagaimana klausul kebersihan "Bawa Bersih, Pulang Bersih"?',
-      a: 'Mobil harus dikembalikan dalam kondisi bersih bebas sampah. Apabila dikembalikan kotor berlumpur, sistem akan secara otomatis mengenakan biaya cuci steam sekolah sebesar Rp 50.000 pada Berita Acara Pengembalian.',
+      q: 'Kapan biaya pengganti cuci Rp 35.000 (35k) dikenakan?',
+      a: 'Apabila kendaraan dikembalikan dalam keadaan kotor/berdebu tebal/belum dicuci steam, peminjam dikenakan biaya pengganti cuci sebesar Rp 35.000 (35k) pada form BAST Pengembalian.',
     },
     {
-      q: 'Bagaimana cara mencetak Surat Tugas Izin Jalan dan Kwitansi Infaq?',
-      a: 'Pada setiap booking yang telah disetujui atau serah terima yang selesai, terdapat tombol "Cetak Surat Tugas Jalan" atau "Kwitansi". Format telah siap cetak resmi dengan Kop Surat Yayasan Wakaf Pendidikan Daar el Dzikr.',
+      q: 'Mengapa checklist Cover Mobil Tertutup wajib dicentang saat pengembalian?',
+      a: 'Sesuai SOP Bab III Pasal 3.2, untuk menjaga kebersihan bodi mobil Suzuki APV dari debu garasi dan cuaca, peminjam wajib memasang sarung/cover mobil dalam keadaan tertutup rapi sebelum meninggalkan garasi.',
+    },
+    {
+      q: 'Bagaimana cara koordinator mengubah klausul SOP atau nomor rekening bank?',
+      a: 'Koordinator dapat membuka menu "Edit Klausul SOP" dan "Edit Data Rekening" di sidebar. Setiap perubahan akan langsung tersimpan di sistem dan tampil secara live di Dashboard depan.',
     },
   ];
 
@@ -109,10 +108,10 @@ export const PetunjukPenggunaanView: React.FC = () => {
         <div>
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-emerald-700" />
-            Petunjuk Penggunaan Sistem Secara Terintegrasi
+            Petunjuk Penggunaan Kendaraan Yayasan Secara Terintegrasi
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Panduan lengkap alur kerja reservasi kendaraan dinas Sekolah Islam Daar el Dzikr
+            Panduan alur operasional armada Suzuki APV Yayasan Wakaf Pendidikan Daar el Dzikr
           </p>
         </div>
 
@@ -122,7 +121,7 @@ export const PetunjukPenggunaanView: React.FC = () => {
           className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors shadow-xs"
         >
           <CalendarDays className="w-4 h-4" />
-          Mulai Booking Sekarang
+          Mulai Reservasi Booking
         </button>
       </div>
 
@@ -130,15 +129,15 @@ export const PetunjukPenggunaanView: React.FC = () => {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-6">
         <div>
           <h3 className="text-sm font-bold text-slate-900">
-            Alur Terintegrasi Siklus Peminjaman Armada (5 Tahapan)
+            Alur Terintegrasi Siklus Peminjaman Armada Yayasan (5 Tahapan)
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Setiap tahapan saling terhubung secara otomatis dari formulir hingga cetak dokumen resmi
+            Setiap tahapan saling terhubung secara otomatis dari formulir booking hingga cetak Surat Tugas dan Kwitansi Infaq
           </p>
         </div>
 
         <div className="space-y-4">
-          {steps.map((st, idx) => {
+          {steps.map((st) => {
             const Icon = st.icon;
             return (
               <div
@@ -165,10 +164,10 @@ export const PetunjukPenggunaanView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab(st.tabTarget as any)}
-                  className="px-4 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-xl font-semibold flex items-center gap-1.5 transition-colors shrink-0 shadow-2xs"
+                  className="px-3.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 text-slate-700 rounded-xl font-semibold flex items-center gap-1.5 transition-colors shrink-0 shadow-2xs"
                 >
-                  {st.actionText}
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 text-emerald-600" />
+                  {st.actionText} <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
             );
@@ -176,115 +175,114 @@ export const PetunjukPenggunaanView: React.FC = () => {
         </div>
       </div>
 
-      {/* Role Comparison Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-        {/* Guru / Staf */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3">
-          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700">
-              <CalendarDays className="w-4 h-4" />
+      {/* Coordinator Management Shortcuts */}
+      <div className="bg-emerald-900 text-white rounded-2xl p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800 pb-4">
+          <div>
+            <h3 className="text-sm font-bold text-amber-300">
+              Menu Khusus Koordinator Sarpras (Akses Cepat)
+            </h3>
+            <p className="text-xs text-emerald-200 mt-0.5">
+              Kelola klausul SOP dan rekening bank yayasan kapan saja
+            </p>
+          </div>
+          <span className="text-[11px] bg-emerald-800 text-emerald-200 font-mono px-3 py-1 rounded-full border border-emerald-700 w-fit">
+            PIN Default: 1234
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div className="bg-emerald-800/60 p-4 rounded-xl border border-emerald-700/60 flex items-start justify-between gap-3">
+            <div>
+              <p className="font-bold text-white flex items-center gap-1.5">
+                <Edit3 className="w-4 h-4 text-amber-300" />
+                Edit Klausul &amp; Bab SOP
+              </p>
+              <p className="text-emerald-200 text-[11px] mt-1">
+                Tambah atau revisi isi pasal SOP, poin ketentuan, dan skala prioritas lembaga.
+              </p>
             </div>
-            <span>Peran Guru &amp; Staf (Akun Reguler)</span>
+            <button
+              type="button"
+              onClick={() => {
+                if (isCoordinator) {
+                  setActiveTab('edit-klausul');
+                } else {
+                  setCoordinatorPinModalOpen(true);
+                }
+              }}
+              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs shrink-0 transition-colors"
+            >
+              Buka Editor
+            </button>
           </div>
-          <ul className="space-y-2 text-slate-600 pl-2">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>Dapat mengajukan reservasi kendaraan dinas untuk hari &amp; jam tertentu.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>Mencetak Surat Tugas / Izin Jalan setelah permohonan disetujui.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>Melakukan serah terima kunci dan pengembalian bersama petugas piket sarpras.</span>
-            </li>
-          </ul>
-        </div>
 
-        {/* Koordinator Sarpras */}
-        <div className="bg-emerald-950 text-white rounded-2xl p-5 shadow-xs space-y-3 border border-emerald-900">
-          <div className="flex items-center gap-2 font-bold text-sm text-emerald-300">
-            <div className="w-8 h-8 rounded-lg bg-emerald-800 flex items-center justify-center text-emerald-200">
-              <ShieldCheck className="w-4 h-4" />
+          <div className="bg-emerald-800/60 p-4 rounded-xl border border-emerald-700/60 flex items-start justify-between gap-3">
+            <div>
+              <p className="font-bold text-white flex items-center gap-1.5">
+                <CreditCard className="w-4 h-4 text-amber-300" />
+                Edit Rekening &amp; Infaq
+              </p>
+              <p className="text-emerald-200 text-[11px] mt-1">
+                Atur rekening bank tujuan, nomor WA konfirmasi, serta nominal 12h/24h dan cuci 35k.
+              </p>
             </div>
-            <span>Peran Koordinator Sarpras (Akun Khusus)</span>
-          </div>
-          <ul className="space-y-2 text-emerald-100 pl-2">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              <span>Memeriksa tabrakan jadwal &amp; memberikan otorisasi (ACC) resmi.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              <span>Menambah atau merubah data unit armada mobil dan jadwal servis.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              <span>Mengunggah logo sekolah &amp; mengelola parameter tarif infaq sarpras.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Emergency & Contacts Bar */}
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-xs text-xs space-y-3">
-        <div className="flex items-center gap-2 text-amber-900 font-bold">
-          <PhoneCall className="w-4 h-4 text-amber-700" />
-          <span>Kontak Bantuan &amp; Keadaan Darurat di Jalan Raya</span>
-        </div>
-        <p className="text-amber-800 text-[11px] leading-relaxed">
-          Jika mengalami kendala operasional (mogok, ban bocor, atau kecelakaan), segera hubungi tim sarpras siaga sekolah:
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-          <div className="bg-white p-3 rounded-xl border border-amber-200">
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Koordinator Sarpras</span>
-            <p className="font-bold text-slate-900 mt-0.5">{settings.coordinatorName}</p>
-            <p className="font-mono text-emerald-800 font-bold text-[11px]">{settings.coordinatorPhone}</p>
-          </div>
-
-          <div className="bg-white p-3 rounded-xl border border-amber-200">
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Driver Utama Sekolah</span>
-            <p className="font-bold text-slate-900 mt-0.5">Pak Bambang (Driver Siaga)</p>
-            <p className="font-mono text-emerald-800 font-bold text-[11px]">0813-9988-7766</p>
-          </div>
-
-          <div className="bg-white p-3 rounded-xl border border-amber-200">
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Pos Keamanan Gerbang Utama</span>
-            <p className="font-bold text-slate-900 mt-0.5">Security Kampus Daar el Dzikr</p>
-            <p className="font-mono text-emerald-800 font-bold text-[11px]">(021) 8899-2345 ext. 101</p>
+            <button
+              type="button"
+              onClick={() => {
+                if (isCoordinator) {
+                  setActiveTab('edit-rekening');
+                } else {
+                  setCoordinatorPinModalOpen(true);
+                }
+              }}
+              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs shrink-0 transition-colors"
+            >
+              Buka Rekening
+            </button>
           </div>
         </div>
       </div>
 
       {/* FAQ Accordion */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-slate-900">
-          Pertanyaan yang Sering Diajukan (FAQ)
-        </h3>
+        <div>
+          <h3 className="text-sm font-bold text-slate-900">Pertanyaan Umum (FAQ) &amp; Solusi</h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Hal-hal yang sering ditanyakan seputar teknis penggunaan Kendaraan Yayasan
+          </p>
+        </div>
 
-        <div className="divide-y divide-slate-100">
+        <div className="space-y-3">
           {faqs.map((faq, idx) => {
             const isOpen = activeFaq === idx;
             return (
-              <div key={idx} className="py-3">
+              <div
+                key={idx}
+                className="border border-slate-200 rounded-xl overflow-hidden text-xs transition-colors"
+              >
                 <button
                   type="button"
                   onClick={() => setActiveFaq(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-xs py-1 hover:text-emerald-800"
+                  className="w-full p-4 text-left flex items-center justify-between gap-4 font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
                 >
-                  <span>{faq.q}</span>
+                  <span className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-mono text-[10px] shrink-0 font-bold">
+                      ?
+                    </span>
+                    {faq.q}
+                  </span>
                   {isOpen ? (
                     <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" />
                   ) : (
                     <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                   )}
                 </button>
+
                 {isOpen && (
-                  <p className="text-slate-600 text-[11px] mt-2 leading-relaxed pl-1 text-justify">
+                  <div className="p-4 pt-2 border-t border-slate-100 bg-slate-50/50 text-slate-600 leading-relaxed">
                     {faq.a}
-                  </p>
+                  </div>
                 )}
               </div>
             );

@@ -20,8 +20,11 @@ import { PengambilanView } from './views/PengambilanView';
 import { PengembalianView } from './views/PengembalianView';
 import { InfaqView } from './views/InfaqView';
 import { SopView } from './views/SopView';
+import { EditKlausulView } from './views/EditKlausulView';
+import { EditRekeningView } from './views/EditRekeningView';
 import { LogoUploadView } from './views/LogoUploadView';
 import { PetunjukPenggunaanView } from './views/PetunjukPenggunaanView';
+import { SettingsCoordinatorView } from './views/SettingsCoordinatorView';
 
 const MainContent: React.FC = () => {
   const { activeTab, sidebarCollapsed, setSidebarCollapsed } = useApp();
@@ -35,8 +38,12 @@ const MainContent: React.FC = () => {
         return <ArmadaView />;
       case 'booking':
         return <BookingView />;
+      case 'settings':
       case 'acc-coordinator':
-        return <CoordinatorAccView />;
+      case 'edit-klausul':
+      case 'edit-rekening':
+      case 'logo-sekolah':
+        return <SettingsCoordinatorView />;
       case 'pengambilan':
         return <PengambilanView />;
       case 'pengembalian':
@@ -45,8 +52,6 @@ const MainContent: React.FC = () => {
         return <InfaqView />;
       case 'sop':
         return <SopView />;
-      case 'logo-sekolah':
-        return <LogoUploadView />;
       case 'petunjuk':
         return <PetunjukPenggunaanView />;
       default:

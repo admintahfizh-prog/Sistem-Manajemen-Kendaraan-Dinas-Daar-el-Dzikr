@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Truck,
@@ -17,10 +17,17 @@ import {
   ChevronRight,
   Gauge,
   Fuel,
-  Users,
-  Volume2,
   Bot,
   Sparkles,
+  BookOpen,
+  Edit3,
+  FileCheck2,
+  Coins,
+  Shield,
+  HelpCircle,
+  Car,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
@@ -28,34 +35,33 @@ export const DashboardView: React.FC = () => {
     vehicles,
     bookings,
     infaqRecords,
+    settings,
+    sopClauses,
     setActiveTab,
     setCoordinatorPinModalOpen,
     isCoordinator,
     setPrintDoc,
     testAiNotificationVoice,
-    voiceEnabled,
-    setVoiceEnabled,
-    soundEnabled,
-    setSoundEnabled,
   } = useApp();
+
+  const [expandedChapter, setExpandedChapter] = useState<number | null>(0);
 
   const totalArmada = vehicles.length;
   const availableArmada = vehicles.filter((v) => v.status === 'Tersedia').length;
   const inUseArmada = vehicles.filter((v) => v.status === 'Digunakan').length;
-  const inServiceArmada = vehicles.filter((v) => v.status === 'Dalam Servis').length;
 
   const pendingBookings = bookings.filter((b) => b.status === 'Menunggu ACC');
   const activeTrips = bookings.filter((b) => b.status === 'Sedang Berjalan');
   const approvedUpcoming = bookings.filter((b) => b.status === 'Disetujui');
 
-  const totalInfaqAmount = infaqRecords.reduce((acc, curr) => acc + curr.amount, 0);
+  const totalInfaqAmount = (infaqRecords || []).reduce((acc, curr) => acc + (Number(curr?.amount) || 0), 0);
 
   const getVehicleName = (vehicleId: string) => {
-    return vehicles.find((v) => v.id === vehicleId)?.name || 'Kendaraan';
+    return vehicles.find((v) => v.id === vehicleId)?.name || 'Suzuki APV Yayasan';
   };
 
   const getVehiclePlate = (vehicleId: string) => {
-    return vehicles.find((v) => v.id === vehicleId)?.plateNumber || '-';
+    return vehicles.find((v) => v.id === vehicleId)?.plateNumber || 'B 1928 SDZ';
   };
 
   return (
@@ -72,7 +78,7 @@ export const DashboardView: React.FC = () => {
                 Ada {pendingBookings.length} Permohonan Booking Menunggu ACC Koordinator
               </p>
               <p className="text-amber-700 text-[11px] mt-0.5">
-                Segera periksa dan setujui jadwal untuk penerbitan surat tugas jalan.
+                Segera periksa dan setujui jadwal untuk penerbitan surat tugas jalan resmi.
               </p>
             </div>
           </div>
@@ -107,21 +113,180 @@ export const DashboardView: React.FC = () => {
               </span>
             </div>
             <p className="text-slate-500 text-[11px] mt-0.5">
-              Memberikan pengumuman suara otomatis ke koordinator untuk Permohonan Booking Baru, Kesiapan Pengambilan, &amp; Pengembalian Armada.
+              Otomatis memberi peringatan suara saat permohonan booking baru masuk, siap serah terima BAST Ambil, &amp; pengembalian armada.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={testAiNotificationVoice}
-            className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold transition-colors flex items-center gap-1.5 shadow-xs text-xs"
-            title="Klik untuk mendengarkan lonceng dan ucapan suara AI secara langsung"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Uji Suara AI Notifikasi
-          </button>
+        <button
+          type="button"
+          onClick={testAiNotificationVoice}
+          className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold transition-colors flex items-center gap-1.5 shadow-xs text-xs shrink-0"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          Uji Suara AI Notifikasi
+        </button>
+      </div>
+
+      {/* PROMINENT SOP & KLAUSUL ON FRONT DASHBOARD */}
+      <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-3xl p-6 shadow-md space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-700/60 pb-5">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-700/60 text-emerald-200 text-[11px] font-semibold">
+              <BookOpen className="w-3.5 h-3.5" />
+              SOP Resmi Penggunaan Kendaraan Yayasan Daar el Dzikr
+            </div>
+            <h2 className="text-xl font-bold tracking-tight text-white">
+              Pedoman Pokok, Klausul &amp; Ketentuan Operasional
+            </h2>
+            <p className="text-xs text-emerald-100/80 max-w-2xl leading-relaxed">
+              Seluruh peminjam dari unit kerja PAUD, SD, SMP, MA, Pesantren, Yayasan, maupun Pribadi wajib menaati amanah pemakaian kendaraan dinas sesuai SOP yang berlaku.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                if (isCoordinator) {
+                  setActiveTab('edit-klausul');
+                } else {
+                  setCoordinatorPinModalOpen(true);
+                }
+              }}
+              className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-xs transition-colors"
+            >
+              <Edit3 className="w-4 h-4" />
+              Edit Klausul (Koordinator)
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('petunjuk')}
+              className="px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-medium rounded-xl text-xs flex items-center gap-1.5 transition-colors border border-emerald-600"
+            >
+              <HelpCircle className="w-4 h-4" />
+              Petunjuk Integrasi
+            </button>
+          </div>
+        </div>
+
+        {/* Highlight Quick Rules Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+          <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
+              <Car className="w-4 h-4" />
+            </div>
+            <p className="text-[10px] text-emerald-300 font-semibold uppercase">Armada Resmi</p>
+            <p className="font-bold text-white mt-0.5">Suzuki APV Arena</p>
+            <p className="text-[10px] text-emerald-200 mt-0.5">B 1928 SDZ</p>
+          </div>
+
+          <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
+              <Shield className="w-4 h-4" />
+            </div>
+            <p className="text-[10px] text-emerald-300 font-semibold uppercase">Unit Kerja</p>
+            <p className="font-bold text-white mt-0.5">7 Kategori</p>
+            <p className="text-[10px] text-emerald-200 mt-0.5">PAUD - Yayasan - Pribadi</p>
+          </div>
+
+          <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
+              <Coins className="w-4 h-4" />
+            </div>
+            <p className="text-[10px] text-emerald-300 font-semibold uppercase">Infaq 12 Jam</p>
+            <p className="font-bold text-amber-300 mt-0.5">Rp {(settings?.infaq12Hours ?? 50000).toLocaleString('id-ID')}</p>
+            <p className="text-[10px] text-emerald-200 mt-0.5">50rb (Pribadi)</p>
+          </div>
+
+          <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
+              <Coins className="w-4 h-4" />
+            </div>
+            <p className="text-[10px] text-emerald-300 font-semibold uppercase">Infaq 24 Jam</p>
+            <p className="font-bold text-amber-300 mt-0.5">Rp {(settings?.infaq24Hours ?? 100000).toLocaleString('id-ID')}</p>
+            <p className="text-[10px] text-emerald-200 mt-0.5">100rb (1 Hari)</p>
+          </div>
+
+          <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
+              <Fuel className="w-4 h-4" />
+            </div>
+            <p className="text-[10px] text-emerald-300 font-semibold uppercase">Level Bensin</p>
+            <p className="font-bold text-white mt-0.5">Strip 3 (Full)</p>
+            <p className="text-[10px] text-emerald-200 mt-0.5">Wajib Kembali Full</p>
+          </div>
+
+          <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
+              <FileCheck2 className="w-4 h-4" />
+            </div>
+            <p className="text-[10px] text-emerald-300 font-semibold uppercase">Cuci &amp; Cover</p>
+            <p className="font-bold text-amber-300 mt-0.5">Cuci 35k</p>
+            <p className="text-[10px] text-emerald-200 mt-0.5">Cover Tertutup Rapi</p>
+          </div>
+        </div>
+
+        {/* Expandable SOP Clauses List */}
+        <div className="bg-white/10 border border-emerald-700/70 rounded-2xl p-4 backdrop-blur-sm space-y-3">
+          <div className="flex items-center justify-between text-xs font-semibold text-emerald-200">
+            <span>Rincian Pasal &amp; Klausul SOP (Dapat Diedit Koordinator):</span>
+            <button
+              type="button"
+              onClick={() => setActiveTab('sop')}
+              className="text-white hover:text-amber-300 font-bold flex items-center gap-1 text-xs"
+            >
+              Buka Halaman SOP Lengkap &rarr;
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {sopClauses.map((chap, idx) => {
+              const isExpanded = expandedChapter === idx;
+              return (
+                <div
+                  key={idx}
+                  className="bg-emerald-950/40 border border-emerald-700/50 rounded-xl overflow-hidden text-xs transition-all"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setExpandedChapter(isExpanded ? null : idx)}
+                    className="w-full p-3.5 flex items-center justify-between gap-3 text-left hover:bg-emerald-900/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono font-bold px-2 py-0.5 bg-emerald-600/60 rounded text-[11px] text-white">
+                        {chap.chapter}
+                      </span>
+                      <span className="font-bold text-white text-xs">{chap.title}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-300 text-[11px]">
+                      <span>{chap.points.length} Poin</span>
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-4 pt-1 border-t border-emerald-800/40 space-y-2.5 bg-emerald-950/20">
+                      {chap.points.map((pt, pIdx) => (
+                        <div key={pIdx} className="p-2.5 rounded-lg bg-emerald-900/30 border border-emerald-700/30">
+                          <p className="font-bold text-emerald-200 text-[11px]">
+                            {pt.no} {pt.title}
+                          </p>
+                          <p className="text-emerald-100/90 text-xs mt-1 leading-relaxed">
+                            {pt.content}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -130,14 +295,14 @@ export const DashboardView: React.FC = () => {
         {/* Total Armada */}
         <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs mb-2">
-            <span>Total Armada</span>
-            <Truck className="w-4 h-4 text-slate-400" />
+            <span>Armada Yayasan</span>
+            <Truck className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold font-mono tabular-nums text-slate-900">
               {totalArmada}
             </span>
-            <span className="text-xs text-slate-500">Unit Kendaraan</span>
+            <span className="text-xs text-slate-500">Unit (Suzuki APV)</span>
           </div>
           <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
             <span className="text-emerald-700 font-medium">{availableArmada} Siap Jalan</span>
@@ -159,12 +324,12 @@ export const DashboardView: React.FC = () => {
             <span className="text-xs text-slate-500">Permohonan</span>
           </div>
           <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span className="text-slate-500">Butuh verifikasi</span>
+            <span className="text-slate-500">Butuh verifikasi PIN</span>
             <button
               onClick={() => setActiveTab('acc-coordinator')}
               className="text-emerald-700 font-semibold hover:underline"
             >
-              Lihat Detail &rarr;
+              ACC Sekarang &rarr;
             </button>
           </div>
         </div>
@@ -187,7 +352,7 @@ export const DashboardView: React.FC = () => {
               onClick={() => setActiveTab('pengembalian')}
               className="text-blue-700 font-semibold hover:underline"
             >
-              Check-in &rarr;
+              BAST Kembali &rarr;
             </button>
           </div>
         </div>
@@ -195,13 +360,13 @@ export const DashboardView: React.FC = () => {
         {/* Total Infaq Terkumpul */}
         <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs mb-2">
-            <span>Infaq Perorangan</span>
+            <span>Kas Infaq Pribadi</span>
             <HeartHandshake className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-xs font-semibold text-emerald-800">Rp</span>
             <span className="text-xl font-bold font-mono tabular-nums text-emerald-800">
-              {totalInfaqAmount.toLocaleString('id-ID')}
+              {(totalInfaqAmount ?? 0).toLocaleString('id-ID')}
             </span>
           </div>
           <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
@@ -210,16 +375,16 @@ export const DashboardView: React.FC = () => {
               onClick={() => setActiveTab('infaq')}
               className="text-emerald-700 font-semibold hover:underline"
             >
-              Buka Buku Kas &rarr;
+              Buku Infaq &rarr;
             </button>
           </div>
         </div>
       </div>
 
-      {/* Quick Action Bar */}
+      {/* Quick Action Bar Alur */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
-          Akses Cepat Alur Penggunaan Kendaraan
+          Alur Terintegrasi Penggunaan Kendaraan Yayasan
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <button
@@ -229,8 +394,8 @@ export const DashboardView: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Calendar className="w-4 h-4" />
             </div>
-            <p className="font-bold text-slate-900">1. Booking Baru</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Pesan jadwal hari &amp; jam</p>
+            <p className="font-bold text-slate-900">1. Booking Jam &amp; Hari</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">Pilih unit kerja (PAUD - Pribadi)</p>
           </button>
 
           <button
@@ -241,7 +406,7 @@ export const DashboardView: React.FC = () => {
               <ShieldCheck className="w-4 h-4" />
             </div>
             <p className="font-bold text-slate-900">2. ACC Koordinator</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Verifikasi &amp; terbitkan surat</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">Otorisasi PIN &amp; Surat Tugas</p>
           </button>
 
           <button
@@ -251,8 +416,8 @@ export const DashboardView: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <KeyRound className="w-4 h-4" />
             </div>
-            <p className="font-bold text-slate-900">3. BAST Ambil (IN)</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Cek kondisi &amp; catat KM awal</p>
+            <p className="font-bold text-slate-900">3. BAST Pengambilan</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">Cek BBM Strip 3 &amp; fisik mobil</p>
           </button>
 
           <button
@@ -262,98 +427,109 @@ export const DashboardView: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <CheckCircle2 className="w-4 h-4" />
             </div>
-            <p className="font-bold text-slate-900">4. BAST Kembali</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Cek fisik &amp; hitung infaq</p>
+            <p className="font-bold text-slate-900">4. BAST Pengembalian</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">Cek cuci 35k &amp; cover tertutup</p>
           </button>
         </div>
       </div>
 
-      {/* Status Armada Visual Overview */}
+      {/* Status Armada Suzuki APV Card */}
       <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Status Kesiapan Armada Hari Ini</h3>
+            <h3 className="text-sm font-bold text-slate-900">Armada Operasional Yayasan</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Kondisi real-time kendaraan dinas Sekolah Daar el Dzikr
+              Unit resmi Kendaraan Yayasan Daar el Dzikr
             </p>
           </div>
           <button
-            onClick={() => setActiveTab('armada')}
+            onClick={() => setActiveTab('booking')}
             className="text-xs font-semibold text-emerald-700 hover:underline flex items-center gap-1"
           >
-            Semua Unit ({vehicles.length}) <ChevronRight className="w-3.5 h-3.5" />
+            Pesan Suzuki APV Sekarang <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {vehicles.map((v) => (
             <div
               key={v.id}
-              className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-sm transition-shadow flex flex-col"
+              className="border border-slate-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow flex flex-col md:col-span-2 lg:col-span-3 bg-slate-50/40"
             >
-              <div className="relative h-36 bg-slate-100 overflow-hidden">
-                <img
-                  src={v.imageUrl}
-                  alt={v.name}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLElement).style.display = 'none';
-                  }}
-                />
-                <div className="absolute top-2.5 right-2.5">
-                  <span
-                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full shadow-xs ${
-                      v.status === 'Tersedia'
-                        ? 'bg-emerald-600 text-white'
-                        : v.status === 'Digunakan'
-                        ? 'bg-blue-600 text-white'
-                        : v.status === 'Dibooking'
-                        ? 'bg-amber-500 text-white'
-                        : 'bg-rose-600 text-white'
-                    }`}
-                  >
-                    {v.status}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-3.5 flex-1 flex flex-col justify-between text-xs space-y-2">
-                <div>
-                  <h4 className="font-bold text-slate-900 leading-snug">{v.name}</h4>
-                  <p className="font-mono text-emerald-800 font-semibold text-[11px]">
-                    {v.plateNumber}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 pt-2 border-t border-slate-100">
-                  <div className="flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{v.capacity} Seat</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Fuel className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="truncate">{v.fuelType.split('/')[0]}</span>
-                  </div>
-                  <div className="col-span-2 flex items-center gap-1.5">
-                    <Gauge className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="font-mono tabular-nums">
-                      {v.odometerKm.toLocaleString('id-ID')} KM
+              <div className="grid grid-cols-1 md:grid-cols-3">
+                <div className="relative h-56 md:h-full bg-slate-100 overflow-hidden">
+                  <img
+                    src={v.imageUrl}
+                    alt={v.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span
+                      className={`text-xs font-bold px-3 py-1 rounded-full shadow-xs ${
+                        v.status === 'Tersedia'
+                          ? 'bg-emerald-600 text-white'
+                          : v.status === 'Digunakan'
+                          ? 'bg-blue-600 text-white'
+                          : v.status === 'Dibooking'
+                          ? 'bg-amber-500 text-white'
+                          : 'bg-rose-600 text-white'
+                      }`}
+                    >
+                      {v.status}
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[10px] text-slate-400">
-                    Servis: {v.lastServiceDate}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('booking')}
-                    className="text-[11px] font-semibold text-emerald-700 hover:underline"
-                  >
-                    Booking Unit
-                  </button>
+                <div className="p-5 md:col-span-2 flex flex-col justify-between text-xs space-y-4">
+                  <div>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
+                          Kendaraan Yayasan Resmi
+                        </span>
+                        <h4 className="font-bold text-lg text-slate-900 mt-1">{v.name}</h4>
+                        <p className="font-mono text-emerald-800 font-bold text-sm tracking-wide">
+                          {v.plateNumber}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('booking')}
+                        className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition-colors shadow-xs"
+                      >
+                        Form Booking Mobil
+                      </button>
+                    </div>
+
+                    <p className="text-slate-600 text-xs mt-2 leading-relaxed">
+                      {v.notes}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-3 border-t border-slate-200">
+                    <div className="bg-white p-2.5 rounded-xl border border-slate-200">
+                      <p className="text-[10px] text-slate-400">Kapasitas</p>
+                      <p className="font-bold text-slate-800 mt-0.5">{v.capacity} Penumpang</p>
+                    </div>
+                    <div className="bg-white p-2.5 rounded-xl border border-slate-200">
+                      <p className="text-[10px] text-slate-400">Bahan Bakar</p>
+                      <p className="font-bold text-slate-800 mt-0.5">Pertalite/Max</p>
+                    </div>
+                    <div className="bg-white p-2.5 rounded-xl border border-slate-200">
+                      <p className="text-[10px] text-slate-400">Odometer Terakhir</p>
+                      <p className="font-mono font-bold text-slate-800 mt-0.5">
+                        {(v.odometerKm ?? 38450).toLocaleString('id-ID')} KM
+                      </p>
+                    </div>
+                    <div className="bg-white p-2.5 rounded-xl border border-slate-200">
+                      <p className="text-[10px] text-slate-400">Servis Berkala</p>
+                      <p className="font-bold text-slate-800 mt-0.5">{v.lastServiceDate}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -390,14 +566,16 @@ export const DashboardView: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-slate-900">{b.borrowerName}</span>
-                        <span className="text-[11px] text-slate-500">({b.division})</span>
+                        <span className="text-[11px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md">
+                          Unit: {b.division}
+                        </span>
                       </div>
-                      <p className="text-[11px] text-emerald-800 font-semibold mt-0.5">
-                        {getVehicleName(b.vehicleId)} · {getVehiclePlate(b.vehicleId)}
+                      <p className="text-[11px] text-slate-600 mt-0.5">
+                        {getVehicleName(b.vehicleId)} ({getVehiclePlate(b.vehicleId)})
                       </p>
                     </div>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                         b.status === 'Sedang Berjalan'
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-emerald-100 text-emerald-800'
@@ -407,7 +585,7 @@ export const DashboardView: React.FC = () => {
                     </span>
                   </div>
 
-                  <p className="text-slate-600 line-clamp-1">
+                  <p className="text-slate-600">
                     <strong className="text-slate-800">Tujuan:</strong> {b.destination}
                   </p>
 
@@ -425,7 +603,7 @@ export const DashboardView: React.FC = () => {
                       }
                       className="text-emerald-700 font-semibold hover:underline"
                     >
-                      Cetak Surat Jalan
+                      Cetak Surat Tugas
                     </button>
                   </div>
                 </div>
@@ -440,7 +618,7 @@ export const DashboardView: React.FC = () => {
             <div>
               <h3 className="text-sm font-bold text-slate-900">Rekap Infaq Pemakaian Pribadi</h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Kompensasi pemeliharaan dari guru/karyawan
+                Kompensasi pemeliharaan kas kendaraan yayasan
               </p>
             </div>
             <button
@@ -458,15 +636,20 @@ export const DashboardView: React.FC = () => {
                 className="p-3.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-3 bg-slate-50/50"
               >
                 <div className="min-w-0">
-                  <p className="font-bold text-slate-900 truncate">{inf.contributorName}</p>
-                  <p className="text-[11px] text-slate-500 truncate">
-                    {inf.vehicleName} · {inf.purpose}
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-bold text-slate-900 truncate">{inf.contributorName}</p>
+                    <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-medium">
+                      {inf.division}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                    {inf.purpose}
                   </p>
                   <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{inf.date}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="font-bold text-emerald-800 font-mono text-sm">
-                    Rp {inf.amount.toLocaleString('id-ID')}
+                    Rp {(inf.amount ?? 0).toLocaleString('id-ID')}
                   </p>
                   <button
                     type="button"

@@ -40,8 +40,8 @@ export const LogoUploadView: React.FC = () => {
     coordinatorName: settings.coordinatorName,
     coordinatorPhone: settings.coordinatorPhone,
     coordinatorPin: settings.coordinatorPin,
-    defaultInfaqPerDay: settings.defaultInfaqPerDay,
-    defaultInfaqPerKm: settings.defaultInfaqPerKm,
+    infaq12Hours: settings.infaq12Hours,
+    infaq24Hours: settings.infaq24Hours,
     washingPenaltyAmount: settings.washingPenaltyAmount,
   });
 
@@ -76,8 +76,8 @@ export const LogoUploadView: React.FC = () => {
     e.preventDefault();
     updateSchoolSettings({
       ...formData,
-      defaultInfaqPerDay: Number(formData.defaultInfaqPerDay),
-      defaultInfaqPerKm: Number(formData.defaultInfaqPerKm),
+      infaq12Hours: Number(formData.infaq12Hours),
+      infaq24Hours: Number(formData.infaq24Hours),
       washingPenaltyAmount: Number(formData.washingPenaltyAmount),
     });
     setNotification('Pengaturan profil lembaga & sarpras berhasil disimpan!');
@@ -282,14 +282,14 @@ export const LogoUploadView: React.FC = () => {
           {/* Infaq Parameters */}
           <div>
             <label className="block font-semibold text-slate-700 mb-1">
-              Tarif Anjuran Infaq Per Hari (Rp)
+              Tarif Infaq 12 Jam (Rp)
             </label>
             <input
               type="number"
-              step={10000}
-              value={formData.defaultInfaqPerDay}
+              step={5000}
+              value={formData.infaq12Hours}
               onChange={(e) =>
-                setFormData({ ...formData, defaultInfaqPerDay: Number(e.target.value) })
+                setFormData({ ...formData, infaq12Hours: Number(e.target.value) })
               }
               className="w-full px-3 py-2 border border-slate-300 rounded-xl font-mono"
             />
@@ -297,7 +297,22 @@ export const LogoUploadView: React.FC = () => {
 
           <div>
             <label className="block font-semibold text-slate-700 mb-1">
-              Denda Infaq Cuci Mobil Kotor (Rp)
+              Tarif Infaq 24 Jam / 1 Hari (Rp)
+            </label>
+            <input
+              type="number"
+              step={10000}
+              value={formData.infaq24Hours}
+              onChange={(e) =>
+                setFormData({ ...formData, infaq24Hours: Number(e.target.value) })
+              }
+              className="w-full px-3 py-2 border border-slate-300 rounded-xl font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block font-semibold text-slate-700 mb-1">
+              Pengganti Cuci Mobil Kotor (Rp)
             </label>
             <input
               type="number"

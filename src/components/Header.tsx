@@ -48,12 +48,18 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         return 'Rekapitulasi Infaq & Pemakaian Pribadi';
       case 'sop':
         return 'SOP & Klausul Penggunaan Kendaraan';
+      case 'settings':
+        return 'Pengaturan & Otorisasi Koordinator';
+      case 'edit-klausul':
+        return 'Edit Klausul SOP (Koordinator)';
+      case 'edit-rekening':
+        return 'Edit Data Rekening & Infaq';
       case 'logo-sekolah':
         return 'Upload Logo & Pengaturan Sarpras';
       case 'petunjuk':
         return 'Petunjuk Penggunaan Sistem';
       default:
-        return 'Sistem Informasi Armada';
+        return 'Kendaraan Yayasan';
     }
   };
 
