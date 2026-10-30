@@ -49,7 +49,6 @@ export const DashboardView: React.FC = () => {
     setCoordinatorPinModalOpen,
     isCoordinator,
     setPrintDoc,
-    testAiNotificationVoice,
   } = useApp();
 
   const [expandedChapter, setExpandedChapter] = useState<number | null>(0);
@@ -104,35 +103,6 @@ export const DashboardView: React.FC = () => {
           </button>
         </div>
       )}
-
-      {/* AI Voice Notification Control Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-            <Bot className="w-5 h-5 text-emerald-700" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900">Sistem Peringatan &amp; Suara AI Notifikasi</span>
-              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">
-                AI Voice Aktif
-              </span>
-            </div>
-            <p className="text-slate-500 text-[11px] mt-0.5">
-              Otomatis memberi peringatan suara saat permohonan booking baru masuk, siap serah terima BAST Ambil, &amp; pengembalian armada.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={testAiNotificationVoice}
-          className="w-full md:w-auto justify-center px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold transition-colors flex items-center gap-1.5 shadow-xs text-xs shrink-0"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          Uji Suara AI Notifikasi
-        </button>
-      </div>
 
       {/* PROMINENT SOP & KLAUSUL ON FRONT DASHBOARD */}
       <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-md space-y-5 sm:space-y-6">

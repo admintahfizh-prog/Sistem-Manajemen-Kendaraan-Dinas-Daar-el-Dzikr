@@ -388,18 +388,18 @@ export const SettingsCoordinatorView: React.FC = () => {
             {pinError && (
               <p className="text-xs text-rose-600 flex items-center gap-1.5 mt-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                PIN salah. Gunakan PIN default: <strong className="font-mono">8899</strong>.
+                PIN salah. Silakan periksa kembali atau hubungi Koordinator Sarpras.
               </p>
             )}
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900">
-            <div className="font-semibold flex items-center gap-1.5 mb-1 text-emerald-800">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700">
+            <div className="font-semibold flex items-center gap-1.5 mb-1 text-slate-800">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              Kode Default Koordinator
+              Otorisasi Khusus Koordinator
             </div>
-            <p className="text-emerald-700">
-              Gunakan kode koordinator: <span className="font-mono font-bold text-emerald-950">8899</span>.
+            <p className="text-slate-500 text-[11px] leading-relaxed">
+              Akses terbatas khusus untuk Koordinator Sarana &amp; Prasarana Yayasan yang berwenang.
             </p>
           </div>
 
@@ -1714,7 +1714,7 @@ export const SettingsCoordinatorView: React.FC = () => {
                 <input
                   type="password"
                   maxLength={6}
-                  placeholder="Isi jika ingin mengganti PIN (default: 8899)"
+                  placeholder="Masukkan 4-6 digit PIN baru jika ingin mengubah"
                   value={profileForm.newPin}
                   onChange={(e) =>
                     setProfileForm({ ...profileForm, newPin: e.target.value })
@@ -1722,7 +1722,7 @@ export const SettingsCoordinatorView: React.FC = () => {
                   className="w-full border border-slate-300 rounded-xl px-3.5 py-2 font-mono tracking-widest text-center"
                 />
                 <span className="text-[10px] text-slate-500 mt-1 block">
-                  PIN saat ini: <strong className="font-mono">{settings.coordinatorPin || '8899'}</strong>
+                  PIN bersifat rahasia. Masukkan kombinasi baru untuk memperbarui PIN otorisasi.
                 </span>
               </div>
             </div>

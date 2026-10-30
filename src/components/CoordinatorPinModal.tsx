@@ -72,18 +72,18 @@ export const CoordinatorPinModal: React.FC = () => {
             {error && (
               <p className="text-xs text-rose-600 flex items-center gap-1.5 mt-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                PIN salah. Silakan periksa kembali atau gunakan PIN default: 8899.
+                PIN salah. Silakan periksa kembali atau hubungi Koordinator Sarpras.
               </p>
             )}
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-xs text-emerald-900">
-            <div className="font-semibold flex items-center gap-1.5 mb-1 text-emerald-800">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700">
+            <div className="font-semibold flex items-center gap-1.5 mb-1 text-slate-800">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              Informasi Kredensial Khusus Koordinator
+              Otorisasi Keamanan Terbatas
             </div>
-            <p className="text-emerald-700">
-              PIN koordinator default adalah <span className="font-mono font-bold text-emerald-900">8899</span>. PIN dapat dikonfigurasi pada menu Pengaturan Koordinator.
+            <p className="text-slate-500 text-[11px] leading-relaxed">
+              Halaman ini dilindungi kode PIN keamanan khusus yang hanya dimiliki oleh Koordinator Sarpras Yayasan.
             </p>
           </div>
 

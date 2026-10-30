@@ -40,7 +40,7 @@ export const PetunjukPenggunaanView: React.FC = () => {
       step: '02',
       title: 'Otorisasi & Persetujuan ACC Koordinator',
       role: 'Koordinator Sarpras (Akun Khusus PIN)',
-      desc: 'Koordinator sarpras masuk menggunakan PIN otorisasi (default: 1234), memeriksa jadwal, memastikan prioritas santri/yayasan, dan memberikan ACC resmi yang menerbitkan Surat Tugas Izin Jalan.',
+      desc: 'Koordinator sarpras masuk menggunakan PIN otorisasi rahasia, memeriksa jadwal, memastikan prioritas santri/yayasan, dan memberikan ACC resmi yang menerbitkan Surat Tugas Izin Jalan.',
       tabTarget: 'acc-coordinator',
       actionText: 'Buka Panel ACC',
       icon: ShieldCheck,
@@ -77,7 +77,7 @@ export const PetunjukPenggunaanView: React.FC = () => {
   const faqs = [
     {
       q: 'Bagaimana cara masuk sebagai Koordinator Sarpras untuk melakukan ACC dan mengedit aturan?',
-      a: 'Klik tombol "Masuk Koordinator" di header atau sidebar, lalu masukkan PIN default (1234). Setelah masuk, Koordinator dapat meng-ACC booking, mengedit klausul SOP, mengedit nomor rekening & tarif infaq, serta mengunggah logo yayasan.',
+      a: 'Klik tombol "Masuk Koordinator" di header atau buka menu "Pengaturan (Koordinator)" di sidebar, lalu masukkan PIN otorisasi koordinator yang berwenang. Setelah masuk, Koordinator dapat meng-ACC booking, mengedit klausul SOP, mengedit nomor rekening & tarif infaq, serta mengunggah logo yayasan.',
     },
     {
       q: 'Berapakah ketentuan anjuran infaq pemeliharaan untuk peminjaman pribadi?',

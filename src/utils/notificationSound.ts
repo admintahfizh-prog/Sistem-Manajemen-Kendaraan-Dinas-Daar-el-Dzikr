@@ -67,7 +67,7 @@ export const playChime = (type: NotificationType = 'booking_new') => {
 };
 
 /**
- * AI Voice Announcement using browser Web Speech Synthesis API
+ * AI Voice Announcement using browser Web Speech Synthesis API (Suara Pria / Laki-laki)
  */
 export const speakAiVoice = (text: string) => {
   try {
@@ -77,19 +77,48 @@ export const speakAiVoice = (text: string) => {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'id-ID';
-    utterance.rate = 0.98; // Natural conversational tempo
-    utterance.pitch = 1.05; // Slightly bright friendly assistant tone
+    utterance.rate = 0.94; // Steady masculine cadence
+    utterance.pitch = 0.82; // Deep, natural male voice pitch
 
-    // Try finding Indonesian voice if available
+    // Select male Indonesian voice if available
     const voices = window.speechSynthesis.getVoices();
-    const indonesianVoice = voices.find(
+    const indonesianVoices = voices.filter(
       (v) =>
-        v.lang.toLowerCase().includes('id') ||
-        v.name.toLowerCase().includes('indonesia') ||
-        v.lang === 'id_ID'
+        v.lang.toLowerCase().startsWith('id') ||
+        v.lang.toLowerCase().includes('indonesia') ||
+        v.name.toLowerCase().includes('indonesia')
     );
-    if (indonesianVoice) {
-      utterance.voice = indonesianVoice;
+
+    // Look for male voice among Indonesian voices
+    const idMaleVoice = indonesianVoices.find(
+      (v) =>
+        v.name.toLowerCase().includes('male') ||
+        v.name.toLowerCase().includes('pria') ||
+        v.name.toLowerCase().includes('laki') ||
+        v.name.toLowerCase().includes('ardi') ||
+        v.name.toLowerCase().includes('andika') ||
+        v.name.toLowerCase().includes('dfz')
+    );
+
+    if (idMaleVoice) {
+      utterance.voice = idMaleVoice;
+      utterance.pitch = 0.85;
+    } else if (indonesianVoices.length > 0) {
+      // Use available Indonesian voice adjusted with lower resonant male pitch
+      utterance.voice = indonesianVoices[0];
+      utterance.pitch = 0.78;
+    } else {
+      // Fallback: look for general male voice
+      const maleVoice = voices.find(
+        (v) =>
+          v.name.toLowerCase().includes('male') ||
+          v.name.toLowerCase().includes('david') ||
+          v.name.toLowerCase().includes('george')
+      );
+      if (maleVoice) {
+        utterance.voice = maleVoice;
+      }
+      utterance.pitch = 0.80;
     }
 
     window.speechSynthesis.speak(utterance);
