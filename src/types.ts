@@ -129,6 +129,32 @@ export interface InfaqRecord {
   receivedBy: string;
 }
 
+export type ExpenseCategory =
+  | 'BBM / Bensin'
+  | 'Servis & Ganti Oli'
+  | 'Cuci Kendaraan'
+  | 'Tambal Ban & Angin'
+  | 'Tol & Parkir'
+  | 'Pajak & STNK'
+  | 'Sparepart & Aksesoris'
+  | 'Honor Supir / Driver'
+  | 'Perawatan Darurat'
+  | 'Lain-lain';
+
+export interface ExpenseRecord {
+  id: string;
+  expenseNo: string;
+  date: string;
+  category: ExpenseCategory;
+  title: string;
+  amount: number;
+  picName: string;
+  paymentMethod: 'Tunai Kas Sarpras' | 'Transfer Bank Yayasan';
+  notes: string;
+  receiptNumber?: string;
+  createdAt: string;
+}
+
 export interface SchoolSettings {
   schoolName: string;
   subTitle: string;
@@ -136,6 +162,7 @@ export interface SchoolSettings {
   address: string;
   phone: string;
   coordinatorName: string;
+  coordinatorTitle?: string;
   coordinatorPhone: string;
   coordinatorPin: string;
   logoUrl: string;

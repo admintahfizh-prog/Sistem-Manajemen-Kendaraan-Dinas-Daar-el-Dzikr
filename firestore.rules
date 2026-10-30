@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net: Default-deny all unexpected collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Vehicles collection
+    match /vehicles/{vehicleId} {
+      allow read: if true;
+      allow create, update: if isValidId(vehicleId)
+        && incoming().name is string && incoming().name.size() <= 150
+        && incoming().plateNumber is string && incoming().plateNumber.size() <= 50;
+      allow delete: if isValidId(vehicleId);
+    }
+
+    // Bookings collection
+    match /bookings/{bookingId} {
+      allow read: if true;
+      allow create: if isValidId(bookingId)
+        && incoming().bookingCode is string && incoming().bookingCode.size() <= 100
+        && incoming().borrowerName is string && incoming().borrowerName.size() <= 150
+        && incoming().status is string;
+      allow update: if isValidId(bookingId)
+        && incoming().bookingCode is string
+        && incoming().borrowerName is string;
+      allow delete: if isValidId(bookingId);
+    }
+
+    // Infaq Records collection
+    match /infaqRecords/{infaqId} {
+      allow read: if true;
+      allow create, update: if isValidId(infaqId)
+        && incoming().receiptNo is string && incoming().receiptNo.size() <= 100
+        && incoming().contributorName is string && incoming().contributorName.size() <= 150
+        && incoming().amount is number && incoming().amount >= 0;
+      allow delete: if isValidId(infaqId);
+    }
+
+    // Expense Records collection (Pengeluaran kas operasional & servis)
+    match /expenses/{expenseId} {
+      allow read: if true;
+      allow create, update: if isValidId(expenseId)
+        && incoming().title is string && incoming().title.size() <= 200
+        && incoming().category is string && incoming().category.size() <= 100
+        && incoming().amount is number && incoming().amount >= 0;
+      allow delete: if isValidId(expenseId);
+    }
+
+    // Settings collection (Current school / foundation settings)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update: if isValidId(settingId)
+        && incoming().schoolName is string && incoming().schoolName.size() <= 200
+        && incoming().foundationName is string && incoming().foundationName.size() <= 200;
+      allow delete: if false; // Safeguard settings from accidental deletion
+    }
+
+    // SOP Clauses collection
+    match /sopClauses/{clauseId} {
+      allow read: if true;
+      allow create, update: if isValidId(clauseId)
+        && incoming().chapter is string && incoming().chapter.size() <= 50
+        && incoming().title is string && incoming().title.size() <= 200;
+      allow delete: if isValidId(clauseId);
+    }
+
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if true;
+      allow create, update: if isValidId(notificationId)
+        && incoming().title is string && incoming().title.size() <= 150
+        && incoming().type is string && incoming().type.size() <= 50;
+      allow delete: if isValidId(notificationId);
+    }
+  }
+}

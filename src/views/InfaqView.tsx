@@ -18,6 +18,9 @@ import {
   Car,
   CreditCard,
   Edit3,
+  Edit2,
+  Trash2,
+  Wallet,
   Phone,
   Copy,
   Check,
@@ -27,6 +30,8 @@ export const InfaqView: React.FC = () => {
   const {
     infaqRecords,
     addInfaqRecord,
+    updateInfaqRecord,
+    deleteInfaqRecord,
     setPrintDoc,
     settings,
     isCoordinator,
@@ -37,6 +42,59 @@ export const InfaqView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [copiedBank, setCopiedBank] = useState(false);
+
+  // Koreksi / Edit State
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<InfaqRecord | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    contributorName: '',
+    division: '',
+    amount: 0,
+    date: '',
+    purpose: '',
+    notes: '',
+    paymentMethod: 'Tunai di Kasir Sarpras' as InfaqRecord['paymentMethod'],
+  });
+
+  const handleOpenEdit = (rec: InfaqRecord) => {
+    setEditingRecord(rec);
+    setEditFormData({
+      contributorName: rec.contributorName,
+      division: rec.division,
+      amount: rec.amount,
+      date: rec.date,
+      purpose: rec.purpose,
+      notes: rec.notes,
+      paymentMethod: rec.paymentMethod,
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleSaveCorrection = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRecord) return;
+    if (editFormData.amount < 0) {
+      alert('Nominal infaq tidak boleh negatif.');
+      return;
+    }
+    updateInfaqRecord(editingRecord.id, {
+      contributorName: editFormData.contributorName,
+      division: editFormData.division,
+      amount: Number(editFormData.amount),
+      date: editFormData.date,
+      purpose: editFormData.purpose,
+      notes: editFormData.notes,
+      paymentMethod: editFormData.paymentMethod,
+    });
+    setEditModalOpen(false);
+    setEditingRecord(null);
+  };
+
+  const handleDeleteRecord = (id: string, receiptNo: string) => {
+    if (window.confirm(`Hapus catatan infaq ${receiptNo}? Saldo kas akan berkurang dan disesuaikan secara realtime.`)) {
+      deleteInfaqRecord(id);
+    }
+  };
 
   // Calculator State (12h 50rb, 24h 100rb)
   const [calcHours, setCalcHours] = useState(12);
@@ -361,19 +419,53 @@ export const InfaqView: React.FC = () => {
                     Rp {(r.amount ?? 0).toLocaleString('id-ID')}
                   </td>
                   <td className="py-3 px-3 text-center whitespace-nowrap">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setPrintDoc({
-                          type: 'kwitansi-infaq',
-                          data: r,
-                        })
-                      }
-                      className="px-2.5 py-1 text-slate-600 hover:text-emerald-700 border border-slate-200 rounded-lg hover:bg-white text-[11px] font-semibold flex items-center gap-1 mx-auto transition-colors"
-                    >
-                      <Printer className="w-3.5 h-3.5" />
-                      Kwitansi
-                    </button>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPrintDoc({
+                            type: 'kwitansi-infaq',
+                            data: r,
+                          })
+                        }
+                        className="px-2 py-1 text-slate-600 hover:text-emerald-700 border border-slate-200 rounded-lg hover:bg-white text-[11px] font-semibold flex items-center gap-1 transition-colors"
+                        title="Cetak Kwitansi"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        Kwitansi
+                      </button>
+
+                      {isCoordinator ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEdit(r)}
+                            className="px-2 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-colors"
+                            title="Koreksi Nominal / Data"
+                          >
+                            <Edit2 className="w-3 h-3 text-emerald-700" />
+                            Koreksi
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteRecord(r.id, r.receiptNo)}
+                            className="p-1 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                            title="Hapus Data Salah"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setCoordinatorPinModalOpen(true)}
+                          className="text-[10px] text-slate-400 hover:text-emerald-700 underline"
+                          title="Login Koordinator untuk Koreksi"
+                        >
+                          Koreksi
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -519,6 +611,144 @@ export const InfaqView: React.FC = () => {
                   className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs"
                 >
                   Simpan &amp; Terbitkan Kwitansi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL KOREKSI / EDIT INFAQ (KOORDINATOR) */}
+      {editModalOpen && editingRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div className="bg-emerald-800 p-5 text-white flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-700 px-2 py-0.5 rounded-md">
+                  Koreksi Saldo Riil
+                </span>
+                <h3 className="font-bold text-base mt-1">
+                  Koreksi Infaq ({editingRecord.receiptNo})
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditModalOpen(false)}
+                className="text-white/80 hover:text-white text-lg font-bold p-1"
+              >
+                &times;
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCorrection} className="p-6 space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Nominal Infaq yang Benar (Rp) *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-500">
+                    Rp
+                  </span>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    step={1000}
+                    value={editFormData.amount}
+                    onChange={(e) => setEditFormData({ ...editFormData, amount: Number(e.target.value) })}
+                    className="w-full pl-10 pr-3 py-2 text-sm font-bold font-mono text-emerald-800 rounded-xl border border-emerald-300 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden bg-emerald-50/40"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Sesuaikan dengan fisik uang kasir atau mutasi bank yayasan agar saldo kas akurat.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Nama Peminjam / Penyetor *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editFormData.contributorName}
+                    onChange={(e) => setEditFormData({ ...editFormData, contributorName: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Unit / Divisi</label>
+                  <input
+                    type="text"
+                    value={editFormData.division}
+                    onChange={(e) => setEditFormData({ ...editFormData, division: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Tanggal Transaksi</label>
+                  <input
+                    type="date"
+                    required
+                    value={editFormData.date}
+                    onChange={(e) => setEditFormData({ ...editFormData, date: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Metode Setoran</label>
+                  <select
+                    value={editFormData.paymentMethod}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        paymentMethod: e.target.value as InfaqRecord['paymentMethod'],
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="Tunai di Kasir Sarpras">Tunai di Kasir Sarpras</option>
+                    <option value="Transfer Bank Yayasan">Transfer Bank Yayasan (BSI)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Keperluan / Keterangan</label>
+                <input
+                  type="text"
+                  value={editFormData.purpose}
+                  onChange={(e) => setEditFormData({ ...editFormData, purpose: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Alasan Koreksi / Catatan</label>
+                <textarea
+                  rows={2}
+                  value={editFormData.notes}
+                  onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
+                  placeholder="Keterangan koreksi nominal yang disesuaikan..."
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setEditModalOpen(false)}
+                  className="px-4 py-2 text-slate-600 hover:text-slate-900"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs"
+                >
+                  Simpan Koreksi
                 </button>
               </div>
             </form>

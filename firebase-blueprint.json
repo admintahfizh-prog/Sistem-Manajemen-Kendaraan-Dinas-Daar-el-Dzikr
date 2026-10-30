@@ -1,0 +1,176 @@
+{
+  "entities": {
+    "Vehicle": {
+      "title": "Vehicle",
+      "description": "Kendaraan operasional yayasan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "plateNumber": { "type": "string", "maxLength": 50 },
+        "type": { "type": "string", "maxLength": 100 },
+        "capacity": { "type": "number" },
+        "fuelType": { "type": "string", "maxLength": 50 },
+        "odometerKm": { "type": "number" },
+        "status": { "type": "string", "maxLength": 50 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "lastServiceDate": { "type": "string", "maxLength": 50 },
+        "nextServiceKm": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["id", "name", "plateNumber", "type", "capacity", "status"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Data peminjaman kendaraan yayasan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "bookingCode": { "type": "string", "maxLength": 100 },
+        "vehicleId": { "type": "string", "maxLength": 128 },
+        "borrowerName": { "type": "string", "maxLength": 150 },
+        "division": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "destination": { "type": "string", "maxLength": 250 },
+        "purpose": { "type": "string", "maxLength": 500 },
+        "purposeCategory": { "type": "string", "maxLength": 100 },
+        "startDate": { "type": "string", "maxLength": 50 },
+        "startTime": { "type": "string", "maxLength": 50 },
+        "endDate": { "type": "string", "maxLength": 50 },
+        "endTime": { "type": "string", "maxLength": 50 },
+        "durationHours": { "type": "number" },
+        "status": { "type": "string", "maxLength": 50 },
+        "coordinatorNotes": { "type": "string", "maxLength": 1000 },
+        "rejectionReason": { "type": "string", "maxLength": 1000 },
+        "estimatedInfaq": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "bookingCode", "vehicleId", "borrowerName", "destination", "status", "startDate", "endDate"]
+    },
+    "InfaqRecord": {
+      "title": "InfaqRecord",
+      "description": "Catatan kas infaq penggunaan kendaraan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "receiptNo": { "type": "string", "maxLength": 100 },
+        "bookingId": { "type": "string", "maxLength": 128 },
+        "bookingCode": { "type": "string", "maxLength": 100 },
+        "date": { "type": "string", "maxLength": 50 },
+        "contributorName": { "type": "string", "maxLength": 150 },
+        "division": { "type": "string", "maxLength": 100 },
+        "vehicleName": { "type": "string", "maxLength": 150 },
+        "purpose": { "type": "string", "maxLength": 500 },
+        "distanceKm": { "type": "number" },
+        "durationHours": { "type": "number" },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 100 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "receivedBy": { "type": "string", "maxLength": 150 }
+      },
+      "required": ["id", "receiptNo", "date", "contributorName", "amount", "paymentMethod"]
+    },
+    "ExpenseRecord": {
+      "title": "ExpenseRecord",
+      "description": "Catatan pengeluaran operasional dan servis kendaraan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "expenseNo": { "type": "string", "maxLength": 100 },
+        "date": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 200 },
+        "amount": { "type": "number" },
+        "picName": { "type": "string", "maxLength": 150 },
+        "paymentMethod": { "type": "string", "maxLength": 100 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "receiptNumber": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "expenseNo", "date", "category", "title", "amount", "picName"]
+    },
+    "SchoolSettings": {
+      "title": "SchoolSettings",
+      "description": "Pengaturan sekolah dan yayasan",
+      "type": "object",
+      "properties": {
+        "schoolName": { "type": "string", "maxLength": 200 },
+        "subTitle": { "type": "string", "maxLength": 300 },
+        "foundationName": { "type": "string", "maxLength": 200 },
+        "address": { "type": "string", "maxLength": 500 },
+        "phone": { "type": "string", "maxLength": 100 },
+        "coordinatorName": { "type": "string", "maxLength": 150 },
+        "coordinatorPhone": { "type": "string", "maxLength": 50 },
+        "coordinatorPin": { "type": "string", "maxLength": 20 },
+        "logoUrl": { "type": "string", "maxLength": 1000 },
+        "sopPdfUrl": { "type": "string", "maxLength": 1000 },
+        "sopPdfName": { "type": "string", "maxLength": 200 },
+        "infaq12Hours": { "type": "number" },
+        "infaq24Hours": { "type": "number" },
+        "washingPenaltyAmount": { "type": "number" },
+        "bankName": { "type": "string", "maxLength": 100 },
+        "bankAccountNumber": { "type": "string", "maxLength": 100 },
+        "bankAccountHolder": { "type": "string", "maxLength": 150 },
+        "bankConfirmationPhone": { "type": "string", "maxLength": 50 },
+        "bankNotes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["schoolName", "foundationName", "coordinatorPin"]
+    },
+    "SopChapter": {
+      "title": "SopChapter",
+      "description": "Pasal dan klausul Standar Operasional Prosedur",
+      "type": "object",
+      "properties": {
+        "chapter": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["chapter", "title"]
+    },
+    "AppNotification": {
+      "title": "AppNotification",
+      "description": "Notifikasi sistem penggunaan kendaraan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 150 },
+        "message": { "type": "string", "maxLength": 500 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "read": { "type": "boolean" },
+        "bookingCode": { "type": "string", "maxLength": 100 },
+        "actionTab": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "type", "title", "message", "timestamp", "read"]
+    }
+  },
+  "firestore": {
+    "/vehicles/{vehicleId}": {
+      "schema": "Vehicle",
+      "description": "Koleksi kendaraan yayasan"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Koleksi booking peminjaman kendaraan"
+    },
+    "/infaqRecords/{infaqId}": {
+      "schema": "InfaqRecord",
+      "description": "Koleksi mutasi infaq peminjaman kendaraan"
+    },
+    "/expenses/{expenseId}": {
+      "schema": "ExpenseRecord",
+      "description": "Koleksi mutasi pengeluaran operasional dan servis kendaraan"
+    },
+    "/settings/{settingId}": {
+      "schema": "SchoolSettings",
+      "description": "Pengaturan yayasan, rekening kas, dan parameter infaq"
+    },
+    "/sopClauses/{clauseId}": {
+      "schema": "SopChapter",
+      "description": "Klausul SOP penggunaan kendaraan yayasan"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "AppNotification",
+      "description": "Notifikasi operasional dan peringatan status peminjaman"
+    }
+  }
+}

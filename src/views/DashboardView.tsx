@@ -28,6 +28,10 @@ import {
   Car,
   ChevronDown,
   ChevronUp,
+  Wallet,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Lock,
 } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
@@ -35,6 +39,10 @@ export const DashboardView: React.FC = () => {
     vehicles,
     bookings,
     infaqRecords,
+    expenses,
+    totalInfaqAmount,
+    totalExpenseAmount,
+    cashBalance,
     settings,
     sopClauses,
     setActiveTab,
@@ -53,8 +61,6 @@ export const DashboardView: React.FC = () => {
   const pendingBookings = bookings.filter((b) => b.status === 'Menunggu ACC');
   const activeTrips = bookings.filter((b) => b.status === 'Sedang Berjalan');
   const approvedUpcoming = bookings.filter((b) => b.status === 'Disetujui');
-
-  const totalInfaqAmount = (infaqRecords || []).reduce((acc, curr) => acc + (Number(curr?.amount) || 0), 0);
 
   const getVehicleName = (vehicleId: string) => {
     return vehicles.find((v) => v.id === vehicleId)?.name || 'Suzuki APV Yayasan';
@@ -357,25 +363,25 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        {/* Total Infaq Terkumpul */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 text-xs mb-2">
-            <span>Kas Infaq Pribadi</span>
-            <HeartHandshake className="w-4 h-4 text-emerald-600" />
+        {/* Saldo Kas Armada */}
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 shadow-xs">
+          <div className="flex items-center justify-between text-emerald-800 text-xs mb-2">
+            <span className="font-semibold">Saldo Kas Armada</span>
+            <Wallet className="w-4 h-4 text-emerald-700" />
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-xs font-semibold text-emerald-800">Rp</span>
+            <span className="text-xs font-bold text-emerald-800">Rp</span>
             <span className="text-xl font-bold font-mono tabular-nums text-emerald-800">
-              {(totalInfaqAmount ?? 0).toLocaleString('id-ID')}
+              {(cashBalance ?? 0).toLocaleString('id-ID')}
             </span>
           </div>
-          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span className="text-slate-500">{infaqRecords.length} Tanda Terima</span>
+          <div className="mt-3 pt-2 border-t border-emerald-200/60 flex items-center justify-between text-[11px]">
+            <span className="text-emerald-700 font-medium">Infaq - Pengeluaran</span>
             <button
-              onClick={() => setActiveTab('infaq')}
-              className="text-emerald-700 font-semibold hover:underline"
+              onClick={() => setActiveTab('keuangan-armada')}
+              className="text-emerald-900 font-bold hover:underline"
             >
-              Buku Infaq &rarr;
+              Buku Kas &rarr;
             </button>
           </div>
         </div>
@@ -430,6 +436,123 @@ export const DashboardView: React.FC = () => {
             <p className="font-bold text-slate-900">4. BAST Pengembalian</p>
             <p className="text-[11px] text-slate-500 mt-0.5">Cek cuci 35k &amp; cover tertutup</p>
           </button>
+        </div>
+      </div>
+
+      {/* Transparansi Kas & Saldo Armada Terkontrol */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-5 md:p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center gap-1">
+                <Wallet className="w-3.5 h-3.5 text-emerald-700" />
+                Transparansi Kas Kendaraan
+              </span>
+              <span className="text-[11px] text-slate-400">Terkontrol Publik</span>
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mt-1">
+              Laporan Kas Pemasukan Infaq, Pengeluaran &amp; Saldo Riil
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Seluruh mutasi tercatat otomatis dan sinkron realtime melalui Firebase Firestore agar dapat dipantau bersama oleh seluruh sivitas yayasan.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('keuangan-armada')}
+            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors shrink-0"
+          >
+            <Coins className="w-4 h-4" />
+            Buku Kas Lengkap &rarr;
+          </button>
+        </div>
+
+        {/* 3 Metric Summary Boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-4">
+          <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-4 flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">
+                Total Pemasukan Infaq
+              </p>
+              <p className="text-lg md:text-xl font-bold font-mono text-emerald-900 mt-1">
+                Rp {(totalInfaqAmount ?? 0).toLocaleString('id-ID')}
+              </p>
+              <p className="text-[11px] text-emerald-700 mt-0.5">
+                {infaqRecords.length} kali pemakaian dinas / pribadi
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <ArrowDownLeft className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="bg-rose-50/60 border border-rose-200/80 rounded-2xl p-4 flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold text-rose-800 uppercase tracking-wider">
+                Total Pengeluaran Operasional
+              </p>
+              <p className="text-lg md:text-xl font-bold font-mono text-rose-900 mt-1">
+                Rp {(totalExpenseAmount ?? 0).toLocaleString('id-ID')}
+              </p>
+              <p className="text-[11px] text-rose-700 mt-0.5">
+                {expenses.length} mutasi BBM, servis &amp; cuci
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0">
+              <ArrowUpRight className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 flex items-center justify-between shadow-xs">
+            <div>
+              <p className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">
+                Saldo Kas Armada Tersedia
+              </p>
+              <p className="text-xl md:text-2xl font-black font-mono text-white mt-1">
+                Rp {(cashBalance ?? 0).toLocaleString('id-ID')}
+              </p>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                PJ: {settings.coordinatorName || 'Moch Cholil, S.Pd.I'}
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center shrink-0">
+              <Wallet className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Info Akses Buku Kas & Riwayat Khusus Koordinator */}
+        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs mt-2">
+          <div className="flex items-center gap-2.5 text-slate-600">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <Shield className="w-4 h-4 text-emerald-700" />
+            </div>
+            <div>
+              <p className="font-bold text-slate-900">Buku Kas &amp; Riwayat Khusus Koordinator</p>
+              <p className="text-[11px] text-slate-500">
+                Pencatatan nota pengeluaran, audit fisik kas, dan koreksi infaq tersimpan aman pada Menu Koordinator.
+              </p>
+            </div>
+          </div>
+          {isCoordinator ? (
+            <button
+              type="button"
+              onClick={() => setActiveTab('keuangan-armada')}
+              className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-colors shrink-0"
+            >
+              <Wallet className="w-3.5 h-3.5" />
+              Buka Buku Kas &amp; Riwayat
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCoordinatorPinModalOpen(true)}
+              className="px-3.5 py-2 border border-slate-300 hover:bg-white text-slate-700 font-semibold rounded-xl text-xs transition-colors shrink-0"
+            >
+              Login PIN Koordinator
+            </button>
+          )}
         </div>
       </div>
 
@@ -612,60 +735,58 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        {/* Rekap Infaq Perorangan Terakhir */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Rekap Infaq Pemakaian Pribadi</h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Kompensasi pemeliharaan kas kendaraan yayasan
-              </p>
-            </div>
-            <button
-              onClick={() => setActiveTab('infaq')}
-              className="text-xs text-emerald-700 font-semibold hover:underline"
-            >
-              Buku Infaq &rarr;
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {infaqRecords.slice(0, 4).map((inf) => (
-              <div
-                key={inf.id}
-                className="p-3.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-3 bg-slate-50/50"
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="font-bold text-slate-900 truncate">{inf.contributorName}</p>
-                    <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-medium">
-                      {inf.division}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                    {inf.purpose}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{inf.date}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="font-bold text-emerald-800 font-mono text-sm">
-                    Rp {(inf.amount ?? 0).toLocaleString('id-ID')}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPrintDoc({
-                        type: 'kwitansi-infaq',
-                        data: inf,
-                      })
-                    }
-                    className="text-[11px] text-slate-500 hover:text-emerald-700 underline mt-0.5 block"
-                  >
-                    Kwitansi
-                  </button>
+        {/* Pengelolaan Keuangan & Buku Kas Khusus Koordinator */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="p-2 bg-emerald-100 text-emerald-800 rounded-xl">
+                  <ShieldCheck className="w-5 h-5 text-emerald-700" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Buku Kas &amp; Riwayat Keuangan</h3>
+                  <p className="text-[11px] text-slate-500">Khusus Pengawasan Koordinator Sarpras</p>
                 </div>
               </div>
-            ))}
+              <span className="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-mono font-medium flex items-center gap-1 border border-slate-200">
+                <Lock className="w-3 h-3 text-slate-500" /> Terkunci
+              </span>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-2.5 text-slate-600">
+              <p className="leading-relaxed">
+                Sesuai regulasi transparansi Yayasan Daar el Dzikr, seluruh rincian transaksi <strong>buku kas</strong>, <strong>mutasi pengeluaran operasional</strong> (BBM, servis rutin, cuci armada), serta <strong>koreksi infaq</strong> hanya dapat diakses melalui <strong>Menu Koordinator</strong> dengan otorisasi kode PIN.
+              </p>
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-[11px]">
+                <span className="text-slate-500">Penanggung Jawab Sarpras:</span>
+                <span className="font-semibold text-slate-800">{settings.coordinatorName || 'Moch Cholil, S.Pd.I'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab('infaq')}
+              className="text-xs text-emerald-700 font-semibold hover:underline flex items-center gap-1"
+            >
+              + Infaq Peminjaman &rarr;
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (isCoordinator) {
+                  setActiveTab('settings');
+                } else {
+                  setCoordinatorPinModalOpen(true);
+                }
+              }}
+              className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
+            >
+              <Lock className="w-3.5 h-3.5 text-emerald-300" />
+              Buka Buku Kas (Koordinator)
+            </button>
           </div>
         </div>
       </div>

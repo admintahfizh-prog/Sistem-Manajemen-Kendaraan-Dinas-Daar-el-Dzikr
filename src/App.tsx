@@ -25,6 +25,7 @@ import { EditRekeningView } from './views/EditRekeningView';
 import { LogoUploadView } from './views/LogoUploadView';
 import { PetunjukPenggunaanView } from './views/PetunjukPenggunaanView';
 import { SettingsCoordinatorView } from './views/SettingsCoordinatorView';
+import { KeuanganArmadaView } from './views/KeuanganArmadaView';
 
 const MainContent: React.FC = () => {
   const { activeTab, sidebarCollapsed, setSidebarCollapsed } = useApp();
@@ -43,6 +44,7 @@ const MainContent: React.FC = () => {
       case 'edit-klausul':
       case 'edit-rekening':
       case 'logo-sekolah':
+      case 'keuangan-armada':
         return <SettingsCoordinatorView />;
       case 'pengambilan':
         return <PengambilanView />;

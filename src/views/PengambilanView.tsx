@@ -15,6 +15,7 @@ import {
   Car,
   AlertCircle,
   FileCheck2,
+  RotateCcw,
 } from 'lucide-react';
 
 export const PengambilanView: React.FC = () => {
@@ -29,6 +30,7 @@ export const PengambilanView: React.FC = () => {
   // Bookings that are approved and ready to be picked up
   const readyBookings = bookings.filter((b) => b.status === 'Disetujui' && !b.handoverIn);
   const checkedOutBookings = bookings.filter((b) => !!b.handoverIn);
+  const inTripCount = bookings.filter((b) => b.status === 'Sedang Berjalan' && !b.handoverReturn).length;
 
   const [selectedBookingId, setSelectedBookingId] = useState<string>(
     readyBookings[0]?.id || ''
@@ -102,6 +104,37 @@ export const PengambilanView: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Consolidated BAST Switcher Tabs */}
+      <div className="flex items-center gap-1.5 p-1.5 bg-slate-200/80 rounded-2xl w-full sm:w-fit">
+        <button
+          type="button"
+          onClick={() => setActiveTab('pengambilan')}
+          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-white text-emerald-950 shadow-xs"
+        >
+          <KeyRound className="w-4 h-4 text-emerald-700" />
+          <span>BAST Pengambilan (Check-out)</span>
+          {readyBookings.length > 0 && (
+            <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+              {readyBookings.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('pengembalian')}
+          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-600 hover:text-slate-900"
+        >
+          <RotateCcw className="w-4 h-4 text-blue-600" />
+          <span>BAST Pengembalian (Check-in)</span>
+          {inTripCount > 0 && (
+            <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+              {inTripCount}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* Header Info */}
       <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

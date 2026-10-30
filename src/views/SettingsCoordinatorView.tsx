@@ -31,10 +31,14 @@ import {
   RotateCcw,
   Sparkles,
   Car,
+  UserCheck,
+  Wallet,
 } from 'lucide-react';
+import { KeuanganArmadaView } from './KeuanganArmadaView';
 
 export const SettingsCoordinatorView: React.FC = () => {
   const {
+    activeTab,
     isCoordinator,
     setCoordinatorPinModalOpen,
     verifyCoordinatorPin,
@@ -56,8 +60,29 @@ export const SettingsCoordinatorView: React.FC = () => {
   } = useApp();
 
   const [activeSubTab, setActiveSubTab] = useState<
-    'acc' | 'rekening' | 'sop' | 'armada' | 'logo'
-  >('acc');
+    'acc' | 'pj' | 'keuangan' | 'rekening' | 'sop' | 'armada' | 'logo'
+  >(
+    activeTab === 'keuangan-armada'
+      ? 'keuangan'
+      : activeTab === 'armada'
+      ? 'armada'
+      : activeTab === 'edit-klausul'
+      ? 'sop'
+      : activeTab === 'edit-rekening'
+      ? 'rekening'
+      : activeTab === 'logo-sekolah'
+      ? 'logo'
+      : 'acc'
+  );
+
+  React.useEffect(() => {
+    if (activeTab === 'keuangan-armada') setActiveSubTab('keuangan');
+    else if (activeTab === 'acc-coordinator') setActiveSubTab('acc');
+    else if (activeTab === 'armada') setActiveSubTab('armada');
+    else if (activeTab === 'edit-klausul') setActiveSubTab('sop');
+    else if (activeTab === 'edit-rekening') setActiveSubTab('rekening');
+    else if (activeTab === 'logo-sekolah') setActiveSubTab('logo');
+  }, [activeTab]);
 
   // Local PIN input if opened without coordinator status
   const [inputPin, setInputPin] = useState('');
@@ -69,6 +94,39 @@ export const SettingsCoordinatorView: React.FC = () => {
   const showSuccess = (msg: string) => {
     setSuccessMsg(msg);
     setTimeout(() => setSuccessMsg(null), 4000);
+  };
+
+  // --- PENANGGUNG JAWAB STATE ---
+  const [pjForm, setPjForm] = useState({
+    coordinatorName: settings.coordinatorName || 'Moch Cholil, S.Pd.I',
+    coordinatorTitle: settings.coordinatorTitle || 'PJ Yayasan / Koordinator Sarpras',
+    coordinatorPhone: settings.coordinatorPhone || '0812-9876-5432',
+    coordinatorPin: settings.coordinatorPin || '8899',
+  });
+
+  // Sync pjForm whenever settings change from Firestore
+  React.useEffect(() => {
+    setPjForm({
+      coordinatorName: settings.coordinatorName || 'Moch Cholil, S.Pd.I',
+      coordinatorTitle: settings.coordinatorTitle || 'PJ Yayasan / Koordinator Sarpras',
+      coordinatorPhone: settings.coordinatorPhone || '0812-9876-5432',
+      coordinatorPin: settings.coordinatorPin || '8899',
+    });
+  }, [settings.coordinatorName, settings.coordinatorTitle, settings.coordinatorPhone, settings.coordinatorPin]);
+
+  const handleSavePj = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pjForm.coordinatorName.trim()) {
+      alert('Nama Penanggung Jawab tidak boleh kosong.');
+      return;
+    }
+    updateSchoolSettings({
+      coordinatorName: pjForm.coordinatorName.trim(),
+      coordinatorTitle: pjForm.coordinatorTitle.trim(),
+      coordinatorPhone: pjForm.coordinatorPhone.trim(),
+      coordinatorPin: pjForm.coordinatorPin.trim() || '8899',
+    });
+    showSuccess('Data Penanggung Jawab & PIN Koordinator berhasil disimpan ke Firebase!');
   };
 
   // --- REKENING & TARIF STATE ---
@@ -418,6 +476,32 @@ export const SettingsCoordinatorView: React.FC = () => {
 
         <button
           type="button"
+          onClick={() => setActiveSubTab('pj')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all whitespace-nowrap ${
+            activeSubTab === 'pj'
+              ? 'bg-white text-emerald-950 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <UserCheck className="w-4 h-4 text-emerald-700" />
+          <span>Edit Penanggung Jawab</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('keuangan')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all whitespace-nowrap ${
+            activeSubTab === 'keuangan'
+              ? 'bg-white text-emerald-950 shadow-xs font-bold'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Wallet className="w-4 h-4 text-emerald-700" />
+          <span>Buku Kas &amp; Riwayat</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveSubTab('rekening')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all whitespace-nowrap ${
             activeSubTab === 'rekening'
@@ -468,6 +552,116 @@ export const SettingsCoordinatorView: React.FC = () => {
           <span>Logo &amp; Profil Lembaga</span>
         </button>
       </div>
+
+      {/* --- SUBTAB: EDIT NAMA PENANGGUNG JAWAB --- */}
+      {activeSubTab === 'pj' && (
+        <form onSubmit={handleSavePj} className="space-y-6">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+            <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                <UserCheck className="w-5 h-5 text-emerald-700" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  Data Penanggung Jawab &amp; Koordinator Sarpras
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Nama ini digunakan sebagai penandatangan resmi Surat Tugas Jalan, BAST Serah Terima, Kuitansi Infaq, dan narahubung darurat.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1.5">
+                  Nama Lengkap Penanggung Jawab *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={pjForm.coordinatorName}
+                  onChange={(e) => setPjForm({ ...pjForm, coordinatorName: e.target.value })}
+                  placeholder="Contoh: Moch Cholil, S.Pd.I"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Cantumkan gelar lengkap untuk keperluan administrasi resmi.
+                </span>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1.5">
+                  Jabatan / Gelar Penanggung Jawab
+                </label>
+                <input
+                  type="text"
+                  value={pjForm.coordinatorTitle}
+                  onChange={(e) => setPjForm({ ...pjForm, coordinatorTitle: e.target.value })}
+                  placeholder="Contoh: PJ Yayasan / Koordinator Sarpras"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Jabatan struktural di lingkungan Yayasan Daar el Dzikr.
+                </span>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1.5">
+                  Nomor HP / WhatsApp Resmi Penanggung Jawab *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={pjForm.coordinatorPhone}
+                  onChange={(e) => setPjForm({ ...pjForm, coordinatorPhone: e.target.value })}
+                  placeholder="Contoh: 0812-9876-5432"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Nomor aktif untuk konfirmasi ACC, pengambilan kunci, &amp; kirim bukti transfer infaq.
+                </span>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1.5">
+                  Kode PIN Akses Koordinator (4-6 Angka)
+                </label>
+                <input
+                  type="password"
+                  maxLength={6}
+                  value={pjForm.coordinatorPin}
+                  onChange={(e) => setPjForm({ ...pjForm, coordinatorPin: e.target.value })}
+                  placeholder="Default: 8899"
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono tracking-widest text-center focus:ring-2 focus:ring-emerald-500 focus:outline-hidden bg-slate-50"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  PIN saat ini: <strong className="font-mono text-emerald-800">{settings.coordinatorPin || '8899'}</strong> (Digunakan untuk ACC &amp; akses halaman ini).
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-emerald-900">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Otomatis Tersinkronisasi ke Firebase</p>
+                <p className="text-emerald-700 text-[11px] mt-0.5">
+                  Setelah disimpan, nama penanggung jawab baru akan langsung aktif dan muncul pada header aplikasi, dasbor pengguna umum, lembar BAST serah terima, kuitansi kas infaq, serta nomor konfirmasi WA tanpa perlu membersihkan cache browser.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-3 border-t border-slate-100">
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-xs shadow-xs flex items-center gap-2 transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                Simpan Data Penanggung Jawab
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
 
       {/* --- SUBTAB 1: ACC BOOKING --- */}
       {activeSubTab === 'acc' && (
@@ -683,6 +877,13 @@ export const SettingsCoordinatorView: React.FC = () => {
               </table>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* --- SUBTAB: BUKU KAS & RIWAYAT KEUANGAN --- */}
+      {activeSubTab === 'keuangan' && (
+        <div className="pt-2">
+          <KeuanganArmadaView embeddedInSettings={true} />
         </div>
       )}
 

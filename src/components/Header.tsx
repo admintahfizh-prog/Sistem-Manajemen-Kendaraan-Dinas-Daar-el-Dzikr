@@ -12,6 +12,7 @@ import {
   User,
   PanelLeftClose,
   PanelLeftOpen,
+  Database,
 } from 'lucide-react';
 import { NotificationPopover } from './NotificationPopover';
 
@@ -28,6 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     logoutCoordinator,
     sidebarCollapsed,
     toggleSidebar,
+    isFirestoreConnected,
+    firestoreSyncStatus,
   } = useApp();
 
   const getTabTitle = () => {
@@ -46,6 +49,8 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         return 'Berita Acara Pengembalian (Check-in)';
       case 'infaq':
         return 'Rekapitulasi Infaq & Pemakaian Pribadi';
+      case 'keuangan-armada':
+        return 'Buku Kas & Saldo Armada (Pemasukan & Pengeluaran)';
       case 'sop':
         return 'SOP & Klausul Penggunaan Kendaraan';
       case 'settings':
@@ -117,8 +122,40 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </div>
       </div>
 
-      {/* Zone 2: Date & Mode Switcher */}
-      <div className="hidden md:flex items-center gap-4 text-xs">
+      {/* Zone 2: Date, Firebase Status & Mode Switcher */}
+      <div className="hidden md:flex items-center gap-3 text-xs">
+        {/* Firestore Database Live Badge */}
+        <div
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-medium transition-colors ${
+            isFirestoreConnected
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : firestoreSyncStatus === 'error'
+              ? 'bg-amber-50 text-amber-800 border-amber-200'
+              : 'bg-slate-100 text-slate-600 border-slate-200'
+          }`}
+          title="Sinkronisasi Data Realtime Firebase Firestore"
+        >
+          <Database className={`w-3.5 h-3.5 ${isFirestoreConnected ? 'text-emerald-600' : 'text-slate-400'}`} />
+          <span>Firebase</span>
+          <span className="relative flex h-2 w-2">
+            {isFirestoreConnected && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            )}
+            <span
+              className={`relative inline-flex rounded-full h-2 w-2 ${
+                isFirestoreConnected
+                  ? 'bg-emerald-500'
+                  : firestoreSyncStatus === 'error'
+                  ? 'bg-amber-500'
+                  : 'bg-slate-400'
+              }`}
+            ></span>
+          </span>
+          <span className="text-[10px] font-semibold">
+            {isFirestoreConnected ? 'Live' : 'Sync'}
+          </span>
+        </div>
+
         <div className="text-slate-500 tabular-nums">
           {currentDateFormatted}
         </div>

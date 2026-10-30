@@ -24,6 +24,7 @@ import {
   Edit3,
   CreditCard,
   Settings,
+  Wallet,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -47,6 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
   const pendingAccCount = bookings.filter((b) => b.status === 'Menunggu ACC').length;
   const readyToPickupCount = bookings.filter((b) => b.status === 'Disetujui' && !b.handoverIn).length;
   const inTripCount = bookings.filter((b) => b.status === 'Sedang Berjalan' && !b.handoverReturn).length;
+  const totalBastPending = readyToPickupCount + inTripCount;
 
   const navItems: {
     id: NavTab;
@@ -59,57 +61,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
   }[] = [
     {
       id: 'dashboard',
-      label: 'Dashboard & SOP',
+      label: 'Dashboard',
       icon: LayoutDashboard,
-      category: 'Utama',
-    },
-    {
-      id: 'armada',
-      label: 'Armada Suzuki APV',
-      icon: Truck,
-      category: 'Utama',
+      category: 'Menu Utama',
     },
     {
       id: 'booking',
-      label: 'Booking Hari & Jam',
+      label: 'Pemesanan (Booking)',
       icon: CalendarDays,
-      category: 'Operasional',
-    },
-    {
-      id: 'acc-coordinator',
-      label: 'ACC Koordinator',
-      icon: ShieldCheck,
-      badge: pendingAccCount,
-      badgeColor: 'bg-amber-500 text-white',
-      coordinatorOnly: true,
-      category: 'Operasional',
+      category: 'Menu Utama',
     },
     {
       id: 'pengambilan',
-      label: 'BAST Pengambilan (BBM 3 Strip)',
+      label: 'Serah Terima (BAST)',
       icon: KeyRound,
-      badge: readyToPickupCount > 0 ? readyToPickupCount : undefined,
+      badge: totalBastPending > 0 ? totalBastPending : undefined,
       badgeColor: 'bg-emerald-600 text-white',
-      category: 'Berita Acara (BAST)',
-    },
-    {
-      id: 'pengembalian',
-      label: 'BAST Pengembalian (Cuci & Cover)',
-      icon: RotateCcw,
-      badge: inTripCount > 0 ? inTripCount : undefined,
-      badgeColor: 'bg-blue-600 text-white',
-      category: 'Berita Acara (BAST)',
+      category: 'Menu Utama',
     },
     {
       id: 'infaq',
-      label: 'Infaq Pemakaian Pribadi',
+      label: 'Infaq Peminjaman',
       icon: HeartHandshake,
-      category: 'Kas & Infaq',
+      category: 'Menu Utama',
     },
     {
       id: 'settings',
-      label: 'Pengaturan (Koordinator)',
-      icon: Settings,
+      label: 'Menu Koordinator',
+      icon: ShieldCheck,
       badge: pendingAccCount > 0 ? pendingAccCount : undefined,
       badgeColor: 'bg-amber-500 text-white',
       coordinatorOnly: true,
@@ -117,15 +96,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
     },
     {
       id: 'sop',
-      label: 'SOP & Klausul Yayasan',
+      label: 'SOP & Panduan',
       icon: BookOpenCheck,
-      category: 'Panduan & Regulasi',
-    },
-    {
-      id: 'petunjuk',
-      label: 'Petunjuk Penggunaan',
-      icon: HelpCircle,
-      category: 'Panduan & Regulasi',
+      category: 'Informasi',
     },
   ];
 
@@ -204,7 +177,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
         {/* Navigation list */}
         <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
           {navItems.map((item, idx) => {
-            const isActive = activeTab === item.id;
+            const isActive =
+              activeTab === item.id ||
+              (item.id === 'pengambilan' && activeTab === 'pengembalian') ||
+              (item.id === 'settings' &&
+                [
+                  'acc-coordinator',
+                  'edit-klausul',
+                  'edit-rekening',
+                  'logo-sekolah',
+                  'keuangan-armada',
+                  'armada',
+                ].includes(activeTab)) ||
+              (item.id === 'sop' && activeTab === 'petunjuk');
             const isLocked = item.coordinatorOnly && !isCoordinator;
             const showCategoryHeading =
               idx === 0 || navItems[idx - 1].category !== item.category;
