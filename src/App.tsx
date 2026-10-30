@@ -26,6 +26,7 @@ import { LogoUploadView } from './views/LogoUploadView';
 import { PetunjukPenggunaanView } from './views/PetunjukPenggunaanView';
 import { SettingsCoordinatorView } from './views/SettingsCoordinatorView';
 import { KeuanganArmadaView } from './views/KeuanganArmadaView';
+import { BottomNav } from './components/BottomNav';
 
 const MainContent: React.FC = () => {
   const { activeTab, sidebarCollapsed, setSidebarCollapsed } = useApp();
@@ -73,7 +74,7 @@ const MainContent: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300">
         <Header onMenuClick={() => setMobileSidebarOpen(true)} />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 overflow-y-auto p-3.5 sm:p-5 md:p-6 lg:p-8 pb-24 lg:pb-8 max-w-7xl w-full mx-auto">
           {renderActiveView()}
         </main>
       </div>
@@ -90,6 +91,9 @@ const MainContent: React.FC = () => {
           <span>Buka Menu Sidebar</span>
         </button>
       )}
+
+      {/* Mobile Bottom Navigation Bar */}
+      <BottomNav onOpenMenu={() => setMobileSidebarOpen(true)} />
 
       {/* Security Modals & Print Handlers */}
       <CoordinatorPinModal />

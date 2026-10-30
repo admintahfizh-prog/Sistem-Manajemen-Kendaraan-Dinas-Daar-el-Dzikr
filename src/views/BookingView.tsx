@@ -502,7 +502,7 @@ export const BookingView: React.FC = () => {
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 text-xs transition-colors"
+              className="w-full sm:w-auto justify-center px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 text-sm sm:text-xs transition-colors min-h-[46px]"
             >
               <CheckCircle2 className="w-4 h-4" />
               Ajukan Permohonan Booking Kendaraan
@@ -512,8 +512,8 @@ export const BookingView: React.FC = () => {
       </div>
 
       {/* Bookings List Section */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-100 pb-4 mb-4">
           <div>
             <h3 className="text-sm font-bold text-slate-900">Daftar Rekap Booking Kendaraan Yayasan</h3>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -528,18 +528,18 @@ export const BookingView: React.FC = () => {
               placeholder="Cari pemohon / unit / kode..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden min-h-[40px]"
             />
           </div>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto text-xs mb-4">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto text-xs mb-4 no-scrollbar">
           {['Semua', 'Menunggu ACC', 'Disetujui', 'Sedang Berjalan', 'Selesai'].map((f) => (
             <button
               key={f}
               onClick={() => setActiveTabFilter(f)}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap shrink-0 ${
+              className={`px-3 py-2 rounded-lg font-medium transition-colors whitespace-nowrap shrink-0 min-h-[36px] ${
                 activeTabFilter === f
                   ? 'bg-white text-slate-900 shadow-xs font-semibold'
                   : 'text-slate-600 hover:text-slate-900'

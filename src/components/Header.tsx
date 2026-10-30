@@ -50,13 +50,13 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       case 'infaq':
         return 'Rekapitulasi Infaq & Pemakaian Pribadi';
       case 'keuangan-armada':
-        return 'Buku Kas & Saldo Armada (Pemasukan & Pengeluaran)';
+        return 'Buku Kas & Saldo Armada';
       case 'sop':
         return 'SOP & Klausul Penggunaan Kendaraan';
       case 'settings':
         return 'Pengaturan & Otorisasi Koordinator';
       case 'edit-klausul':
-        return 'Edit Klausul SOP (Koordinator)';
+        return 'Edit Klausul SOP';
       case 'edit-rekening':
         return 'Edit Data Rekening & Infaq';
       case 'logo-sekolah':
@@ -68,6 +68,31 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     }
   };
 
+  const getShortTabTitle = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return 'Beranda';
+      case 'booking':
+        return 'Booking';
+      case 'pengambilan':
+        return 'BAST Check-out';
+      case 'pengembalian':
+        return 'BAST Check-in';
+      case 'infaq':
+        return 'Infaq';
+      case 'keuangan-armada':
+        return 'Buku Kas';
+      case 'acc-coordinator':
+        return 'ACC Koordinator';
+      case 'sop':
+        return 'SOP & Klausul';
+      case 'settings':
+        return 'Koordinator';
+      default:
+        return 'Kendaraan';
+    }
+  };
+
   const currentDateFormatted = new Date().toLocaleDateString('id-ID', {
     weekday: 'long',
     day: 'numeric',
@@ -76,14 +101,14 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   });
 
   return (
-    <header className="h-16 px-4 md:px-6 bg-white border-b border-slate-200 flex items-center justify-between gap-4 sticky top-0 z-30">
-      {/* Zone 1: Toggle Sidebar (Mobile + Desktop) + Breadcrumb */}
-      <div className="flex items-center gap-3 min-w-0">
+    <header className="h-14 sm:h-16 px-3 sm:px-6 bg-white border-b border-slate-200 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
+      {/* Zone 1: Toggle Sidebar (Mobile + Desktop) + Title */}
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         {/* Mobile Hamburger */}
         <button
           type="button"
           onClick={onMenuClick}
-          className="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100"
+          className="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
           aria-label="Buka Menu"
         >
           <Menu className="w-5 h-5" />
@@ -93,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         <button
           type="button"
           onClick={toggleSidebar}
-          className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-xl border transition-all text-slate-700 hover:text-slate-900 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+          className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-xl border transition-all text-slate-700 hover:text-slate-900 border-slate-200 hover:border-slate-300 hover:bg-slate-50 shrink-0"
           title={sidebarCollapsed ? 'Tampilkan Menu Sidebar' : 'Sembunyikan Menu Sidebar'}
           aria-label="Toggle Sidebar"
         >
@@ -111,14 +136,37 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </button>
 
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500">
             <span>Daar el Dzikr</span>
             <span aria-hidden="true">/</span>
             <span className="text-slate-800 font-medium truncate">{getTabTitle()}</span>
           </div>
-          <h2 className="text-sm md:text-base font-bold text-slate-900 truncate">
-            {getTabTitle()}
-          </h2>
+          <div className="flex items-center gap-2 min-w-0">
+            <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate">
+              <span className="sm:hidden">{getShortTabTitle()}</span>
+              <span className="hidden sm:inline">{getTabTitle()}</span>
+            </h2>
+            {/* Mobile Firebase Live Sync Dot */}
+            <div
+              className="flex md:hidden items-center gap-1 shrink-0"
+              title="Firebase Firestore Terhubung Realtime"
+            >
+              <span className="relative flex h-2 w-2">
+                {isFirestoreConnected && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                )}
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    isFirestoreConnected
+                      ? 'bg-emerald-500'
+                      : firestoreSyncStatus === 'error'
+                      ? 'bg-amber-500'
+                      : 'bg-slate-400'
+                  }`}
+                ></span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -74,7 +74,7 @@ export const DashboardView: React.FC = () => {
     <div className="space-y-6">
       {/* Top Banner Notice if Pending ACC */}
       {pendingBookings.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
               <AlertTriangle className="w-5 h-5" />
@@ -97,7 +97,7 @@ export const DashboardView: React.FC = () => {
                 setCoordinatorPinModalOpen(true);
               }
             }}
-            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-colors shrink-0 shadow-xs flex items-center gap-1.5"
+            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-colors shrink-0 shadow-xs flex items-center gap-1.5"
           >
             <ShieldCheck className="w-4 h-4" />
             Buka ACC Koordinator
@@ -106,7 +106,7 @@ export const DashboardView: React.FC = () => {
       )}
 
       {/* AI Voice Notification Control Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+      <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
             <Bot className="w-5 h-5 text-emerald-700" />
@@ -127,7 +127,7 @@ export const DashboardView: React.FC = () => {
         <button
           type="button"
           onClick={testAiNotificationVoice}
-          className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold transition-colors flex items-center gap-1.5 shadow-xs text-xs shrink-0"
+          className="w-full md:w-auto justify-center px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-semibold transition-colors flex items-center gap-1.5 shadow-xs text-xs shrink-0"
         >
           <Sparkles className="w-3.5 h-3.5" />
           Uji Suara AI Notifikasi
@@ -135,14 +135,14 @@ export const DashboardView: React.FC = () => {
       </div>
 
       {/* PROMINENT SOP & KLAUSUL ON FRONT DASHBOARD */}
-      <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-3xl p-6 shadow-md space-y-6">
+      <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-md space-y-5 sm:space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-700/60 pb-5">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-700/60 text-emerald-200 text-[11px] font-semibold">
               <BookOpen className="w-3.5 h-3.5" />
               SOP Resmi Penggunaan Kendaraan Yayasan Daar el Dzikr
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-white">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
               Pedoman Pokok, Klausul &amp; Ketentuan Operasional
             </h2>
             <p className="text-xs text-emerald-100/80 max-w-2xl leading-relaxed">
@@ -150,7 +150,7 @@ export const DashboardView: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 w-full md:w-auto">
             <button
               type="button"
               onClick={() => {
@@ -160,7 +160,7 @@ export const DashboardView: React.FC = () => {
                   setCoordinatorPinModalOpen(true);
                 }
               }}
-              className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-xs transition-colors"
+              className="w-full sm:w-auto justify-center px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-xs transition-colors"
             >
               <Edit3 className="w-4 h-4" />
               Edit Klausul (Koordinator)
@@ -168,7 +168,7 @@ export const DashboardView: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('petunjuk')}
-              className="px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-medium rounded-xl text-xs flex items-center gap-1.5 transition-colors border border-emerald-600"
+              className="w-full sm:w-auto justify-center px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-medium rounded-xl text-xs flex items-center gap-1.5 transition-colors border border-emerald-600"
             >
               <HelpCircle className="w-4 h-4" />
               Petunjuk Integrasi
@@ -177,7 +177,7 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Highlight Quick Rules Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 text-xs">
           <div className="bg-emerald-800/60 border border-emerald-700 rounded-2xl p-3.5 backdrop-blur-xs">
             <div className="w-7 h-7 rounded-lg bg-emerald-700 text-emerald-200 flex items-center justify-center mb-2">
               <Car className="w-4 h-4" />

@@ -269,39 +269,45 @@ export const PengambilanView: React.FC = () => {
             </div>
 
             {/* Visual 3-Strip Meter */}
-            <div className="mt-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+            <div className="mt-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-slate-700">
-                <Fuel className="w-4 h-4 text-emerald-700" />
-                <span className="font-semibold">Indikator Bensin 3 Strip:</span>
+                <Fuel className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span className="font-semibold text-xs">Indikator Bensin 3 Strip:</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className={`px-3 py-1 rounded-lg font-mono font-bold text-xs ${
+              <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, fuelLevel: 'Strip 1 (E / Rendah)' })}
+                  className={`px-3 py-2 rounded-lg font-mono font-bold text-xs text-center transition-all min-h-[38px] ${
                     formData.fuelLevel === 'Strip 1 (E / Rendah)'
-                      ? 'bg-amber-500 text-white'
-                      : 'bg-slate-200 text-slate-500'
+                      ? 'bg-amber-500 text-white shadow-xs'
+                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
                   }`}
                 >
                   [ 1 ] Rendah
-                </div>
-                <div
-                  className={`px-3 py-1 rounded-lg font-mono font-bold text-xs ${
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, fuelLevel: 'Strip 2 (Sedang)' })}
+                  className={`px-3 py-2 rounded-lg font-mono font-bold text-xs text-center transition-all min-h-[38px] ${
                     formData.fuelLevel === 'Strip 2 (Sedang)'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200 text-slate-500'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
                   }`}
                 >
                   [ 2 ] Sedang
-                </div>
-                <div
-                  className={`px-3 py-1 rounded-lg font-mono font-bold text-xs ${
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, fuelLevel: 'Strip 3 (Full / Penuh)' })}
+                  className={`px-3 py-2 rounded-lg font-mono font-bold text-xs text-center transition-all min-h-[38px] ${
                     formData.fuelLevel === 'Strip 3 (Full / Penuh)'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-200 text-slate-500'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
                   }`}
                 >
-                  [ 3 ] Full Penuh
-                </div>
+                  [ 3 ] Full
+                </button>
               </div>
             </div>
           </div>
@@ -312,7 +318,7 @@ export const PengambilanView: React.FC = () => {
               3. Checklist Kondisi Fisik &amp; Kelengkapan Kendaraan
             </label>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               {[
                 { key: 'interiorClean', label: 'Kebersihan Kabin & Jok (Bebas sampah & wangi)' },
                 { key: 'exteriorClean', label: 'Kebersihan Bodi Luar & Kaca Spion' },
@@ -325,7 +331,7 @@ export const PengambilanView: React.FC = () => {
               ].map((item) => (
                 <label
                   key={item.key}
-                  className="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer"
+                  className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer min-h-[44px] transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -336,9 +342,9 @@ export const PengambilanView: React.FC = () => {
                         [item.key]: e.target.checked,
                       })
                     }
-                    className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300"
+                    className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300 shrink-0"
                   />
-                  <span className="font-medium text-slate-800">{item.label}</span>
+                  <span className="font-medium text-slate-800 text-xs">{item.label}</span>
                 </label>
               ))}
             </div>
@@ -354,7 +360,7 @@ export const PengambilanView: React.FC = () => {
               placeholder="Contoh: Bodi mulus bersih, cover sarung mobil tersimpan rapi di bagasi belakang."
               value={formData.initialDefectsNotes}
               onChange={(e) => setFormData({ ...formData, initialDefectsNotes: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white min-h-[44px]"
             />
           </div>
 
@@ -370,7 +376,7 @@ export const PengambilanView: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, borrowerSignatureName: e.target.value })
               }
-              className="w-full max-w-md px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900"
+              className="w-full max-w-md px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900 min-h-[44px]"
             />
           </div>
 
@@ -378,7 +384,7 @@ export const PengambilanView: React.FC = () => {
           <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 transition-colors"
+              className="w-full sm:w-auto justify-center px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 transition-colors min-h-[46px] text-sm sm:text-xs"
             >
               <CheckCircle2 className="w-4 h-4" />
               Selesaikan BAST Pengambilan (IN) &amp; Cetak Berkas

@@ -25,6 +25,7 @@ import {
   CreditCard,
   Settings,
   Wallet,
+  X,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -121,18 +122,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
       {/* Mobile backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden"
+          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs lg:hidden animate-fade-in"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 text-slate-100 flex flex-col border-r border-slate-800 transition-all duration-300 ease-in-out lg:static ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] bg-slate-900 text-slate-100 flex flex-col border-r border-slate-800 transition-all duration-300 ease-in-out lg:static ${
           sidebarCollapsed
             ? 'lg:-ml-72 lg:pointer-events-none'
             : 'lg:ml-0'
-        } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        } ${mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand Lockup */}
         <div className="p-4 border-b border-slate-800/80 bg-slate-950/40 flex items-center justify-between gap-2">
@@ -162,12 +163,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
             </div>
           </div>
 
-          {/* Quick Hide Button in Brand Header */}
+          {/* Mobile Close Button */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(false)}
+            title="Tutup Menu"
+            className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Tutup Menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Desktop Quick Hide Button in Brand Header */}
           <button
             type="button"
             onClick={handleHideSidebar}
             title="Sembunyikan Menu Sidebar"
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors shrink-0"
+            className="hidden lg:flex p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors shrink-0"
             aria-label="Sembunyikan Sidebar"
           >
             <PanelLeftClose className="w-4 h-4" />
@@ -204,7 +216,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) =
                 <button
                   type="button"
                   onClick={() => handleNavClick(item.id, item.coordinatorOnly)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 min-h-[44px] rounded-xl text-xs font-medium transition-all group ${
                     isActive
                       ? 'bg-emerald-600 text-white shadow-xs font-semibold'
                       : 'text-slate-300 hover:text-white hover:bg-slate-800/70'

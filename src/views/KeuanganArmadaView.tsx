@@ -566,33 +566,18 @@ export const KeuanganArmadaView: React.FC<KeuanganArmadaViewProps> = ({ embedded
 
         {/* Tab 1: Semua Mutasi (Buku Kas Umum) */}
         {activeTabSub === 'semua' && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                <tr>
-                  <th className="py-3 px-4">Tanggal &amp; Kode</th>
-                  <th className="py-3 px-4">Tipe &amp; Kategori</th>
-                  <th className="py-3 px-4">Uraian / Keterangan</th>
-                  <th className="py-3 px-4">PJ / Kasir</th>
-                  <th className="py-3 px-4 text-right">Nominal</th>
-                  {isCoordinator && <th className="py-3 px-4 text-center">Aksi Koordinator</th>}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-normal">
-                {combinedTransactions.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-8 text-center text-slate-400">
-                      Belum ada transaksi kas yang tercatat.
-                    </td>
-                  </tr>
-                ) : (
-                  combinedTransactions.map((tx) => (
-                    <tr key={tx.code} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-slate-900">{tx.date}</div>
-                        <div className="text-[11px] font-mono text-slate-500">{tx.code}</div>
-                      </td>
-                      <td className="py-3 px-4">
+          <div>
+            {/* Mobile Card List (< md) */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {combinedTransactions.length === 0 ? (
+                <div className="py-8 text-center text-slate-400 text-xs">
+                  Belum ada transaksi kas yang tercatat.
+                </div>
+              ) : (
+                combinedTransactions.map((tx) => (
+                  <div key={tx.code} className="p-4 space-y-2 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span
                           className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                             tx.type === 'pemasukan'
@@ -607,75 +592,191 @@ export const KeuanganArmadaView: React.FC<KeuanganArmadaViewProps> = ({ embedded
                           )}
                           {tx.category}
                         </span>
-                        <div className="text-[10px] text-slate-400 mt-0.5">{tx.paymentMethod}</div>
-                      </td>
-                      <td className="py-3 px-4 max-w-xs">
-                        <div className="font-medium text-slate-900 line-clamp-1">{tx.title}</div>
-                        {tx.notes && (
-                          <div className="text-[11px] text-slate-500 italic line-clamp-1">
-                            {tx.notes}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="text-slate-800 font-medium">{tx.pic}</div>
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold">
-                        <span
-                          className={tx.type === 'pemasukan' ? 'text-emerald-700' : 'text-rose-700'}
-                        >
-                          {tx.type === 'pemasukan' ? '+' : '-'} Rp{' '}
-                          {tx.amount.toLocaleString('id-ID')}
-                        </span>
-                      </td>
+                        <span className="font-mono text-[10px] text-slate-400">{tx.code}</span>
+                      </div>
+                      <span
+                        className={`font-mono font-bold text-sm shrink-0 ${
+                          tx.type === 'pemasukan' ? 'text-emerald-700' : 'text-rose-700'
+                        }`}
+                      >
+                        {tx.type === 'pemasukan' ? '+' : '-'} Rp {tx.amount.toLocaleString('id-ID')}
+                      </span>
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-slate-900">{tx.title}</p>
+                      {tx.notes && (
+                        <p className="text-[11px] text-slate-500 italic mt-0.5">{tx.notes}</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+                      <span>
+                        {tx.date} &bull; PJ: <strong className="text-slate-800">{tx.pic}</strong>
+                      </span>
                       {isCoordinator && (
-                        <td className="py-3 px-4 text-center">
+                        <div className="flex items-center gap-1.5">
                           {tx.type === 'pemasukan' ? (
-                            <div className="flex items-center justify-center gap-1">
+                            <>
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditInfaq(tx.rawItem as InfaqRecord)}
-                                className="p-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
-                                title="Koreksi Nominal / Data Infaq"
+                                className="px-2.5 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 rounded-lg font-semibold flex items-center gap-1 min-h-[36px]"
+                                title="Koreksi Nominal"
                               >
-                                <Edit2 className="w-3.5 h-3.5" />
+                                <Edit2 className="w-3 h-3 text-emerald-700" />
+                                Koreksi
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteInfaq(tx.id, tx.code)}
-                                className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
-                                title="Hapus Infaq Keliru"
+                                className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg min-h-[36px] min-w-[36px] flex items-center justify-center"
+                                title="Hapus Infaq"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
-                            </div>
+                            </>
                           ) : (
-                            <div className="flex items-center justify-center gap-1">
+                            <>
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditExpense(tx.rawItem as ExpenseRecord)}
-                                className="p-1.5 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors"
+                                className="px-2.5 py-1 bg-blue-50 text-blue-800 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-1 min-h-[36px]"
                                 title="Edit Pengeluaran"
                               >
-                                <Edit2 className="w-3.5 h-3.5" />
+                                <Edit2 className="w-3 h-3 text-blue-700" />
+                                Edit
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteExpense(tx.id, tx.code)}
-                                className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
+                                className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg min-h-[36px] min-w-[36px] flex items-center justify-center"
                                 title="Hapus Pengeluaran"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                  <tr>
+                    <th className="py-3 px-4">Tanggal &amp; Kode</th>
+                    <th className="py-3 px-4">Tipe &amp; Kategori</th>
+                    <th className="py-3 px-4">Uraian / Keterangan</th>
+                    <th className="py-3 px-4">PJ / Kasir</th>
+                    <th className="py-3 px-4 text-right">Nominal</th>
+                    {isCoordinator && <th className="py-3 px-4 text-center">Aksi Koordinator</th>}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-normal">
+                  {combinedTransactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-slate-400">
+                        Belum ada transaksi kas yang tercatat.
+                      </td>
+                    </tr>
+                  ) : (
+                    combinedTransactions.map((tx) => (
+                      <tr key={tx.code} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-3 px-4">
+                          <div className="font-semibold text-slate-900">{tx.date}</div>
+                          <div className="text-[11px] font-mono text-slate-500">{tx.code}</div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                              tx.type === 'pemasukan'
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-rose-100 text-rose-800'
+                            }`}
+                          >
+                            {tx.type === 'pemasukan' ? (
+                              <ArrowDownLeft className="w-3 h-3" />
+                            ) : (
+                              <ArrowUpRight className="w-3 h-3" />
+                            )}
+                            {tx.category}
+                          </span>
+                          <div className="text-[10px] text-slate-400 mt-0.5">{tx.paymentMethod}</div>
+                        </td>
+                        <td className="py-3 px-4 max-w-xs">
+                          <div className="font-medium text-slate-900 line-clamp-1">{tx.title}</div>
+                          {tx.notes && (
+                            <div className="text-[11px] text-slate-500 italic line-clamp-1">
+                              {tx.notes}
                             </div>
                           )}
                         </td>
-                      )}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                        <td className="py-3 px-4">
+                          <div className="text-slate-800 font-medium">{tx.pic}</div>
+                        </td>
+                        <td className="py-3 px-4 text-right font-mono font-bold">
+                          <span
+                            className={tx.type === 'pemasukan' ? 'text-emerald-700' : 'text-rose-700'}
+                          >
+                            {tx.type === 'pemasukan' ? '+' : '-'} Rp{' '}
+                            {tx.amount.toLocaleString('id-ID')}
+                          </span>
+                        </td>
+                        {isCoordinator && (
+                          <td className="py-3 px-4 text-center">
+                            {tx.type === 'pemasukan' ? (
+                              <div className="flex items-center justify-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditInfaq(tx.rawItem as InfaqRecord)}
+                                  className="p-1.5 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
+                                  title="Koreksi Nominal / Data Infaq"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteInfaq(tx.id, tx.code)}
+                                  className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
+                                  title="Hapus Infaq Keliru"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditExpense(tx.rawItem as ExpenseRecord)}
+                                  className="p-1.5 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors"
+                                  title="Edit Pengeluaran"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteExpense(tx.id, tx.code)}
+                                  className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
+                                  title="Hapus Pengeluaran"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 

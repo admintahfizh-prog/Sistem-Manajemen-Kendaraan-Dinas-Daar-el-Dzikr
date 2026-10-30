@@ -426,7 +426,7 @@ export const PengembalianView: React.FC = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, returneeSignatureName: e.target.value })
                 }
-                className="w-full max-w-md px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900"
+                className="w-full max-w-md px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-900 min-h-[44px]"
               />
             </div>
           </div>
@@ -435,7 +435,7 @@ export const PengembalianView: React.FC = () => {
           <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 transition-colors"
+              className="w-full sm:w-auto justify-center px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold shadow-xs flex items-center gap-2 transition-colors min-h-[46px] text-sm sm:text-xs"
             >
               <CheckCircle2 className="w-4 h-4" />
               Selesaikan BAST Pengembalian &amp; Cetak Berkas
